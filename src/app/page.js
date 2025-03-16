@@ -1,103 +1,149 @@
-import Image from "next/image";
+"use client"
+
+import { useState, useEffect } from "react"
+import Image from "next/image"
+import LoginForm from "@/components/auth/LoginForm"
+import SignupForm from "@/components/auth/SignupForm"
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [authMode, setAuthMode] = useState("login")
+  const [showPassword, setShowPassword] = useState(false)
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    name: "",
+    confirmPassword: "",
+  })
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [currentPoster, setCurrentPoster] = useState(0)
+  const [nextPoster, setNextPoster] = useState(1)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const posters = [
+    "/test1.jpg",
+    "/test2.jpg",
+    "/test3.jpg",
+    "/test4.jpg"
+  ]
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const next = (currentPoster + 2) % posters.length;
+      const nextNext = (nextPoster + 2) % posters.length;
+      // Đợi 1 frame để đảm bảo next poster đã được render
+      requestAnimationFrame(() => {
+        // Bắt đầu transition
+        setIsTransitioning(!isTransitioning);
+
+        // Sau khi transition hoàn tất (1000ms)
+        setTimeout(() => {
+          if (isTransitioning) {
+            setCurrentPoster(next);
+          } else {
+            setNextPoster(nextNext);
+          }
+        }, 1000);
+      });
+      
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [currentPoster, nextPoster]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const toggleAuthMode = () => {
+    setAuthMode(authMode === "login" ? "signup" : "login")
+  }
+
+  return (
+    <div className="flex min-h-screen">
+      {/* Poster side - 65% */}
+      <div className="hidden lg:block lg:w-2/3 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-l from-black via-black/0 to-transparent z-10"></div>
+        
+        {/* Current poster */}
+        <div 
+          className="absolute inset-0 transition-opacity duration-1000" 
+          style={{ opacity: isTransitioning ? 0 : 1 }}
+        >
+          <Image
+            src={posters[currentPoster]}
+            alt="Cinema"
+            fill
+            className="object-cover"
+            priority
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        {/* Next poster */}
+        <div 
+          className="absolute inset-0 transition-opacity duration-1000" 
+          style={{ opacity: isTransitioning ? 1 : 0 }}
         >
           <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            src={posters[nextPoster]}
+            alt="Cinema"
+            fill
+            className="object-cover"
+            priority
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+
+        <div className="absolute bottom-4 right-0 left-0 p-12">
+          <h2 className="text-3xl font-bold mb-2">Experience the magic of cinema</h2>
+          <p className="text-xl text-white/80">Book your tickets for the latest blockbusters</p>
+        </div>
+
+        <div className="absolute bottom-8 right-0 left-0 flex justify-center gap-2 z-20">
+          {posters.map((_, index) => (
+            <div
+              key={index}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index === currentPoster ? 'bg-primary' : 'bg-white/50'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Auth form side - 35% */}
+      <div className="w-full lg:w-1/3 flex items-center justify-center p-6 bg-black">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-primary mb-2">MBCKing</h1>
+            <p className="text-muted-foreground">Your premier cinema experience</p>
+          </div>
+
+          {authMode === "login" ? (
+            <LoginForm
+              formData={formData}
+              handleChange={handleChange}
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
+            />
+          ) : (
+            <SignupForm
+              formData={formData}
+              handleChange={handleChange}
+              showPassword={showPassword}
+              setShowPassword={setShowPassword}
+            />
+          )}
+
+          <div className="mt-8 text-center">
+            <p className="text-muted-foreground">
+              {authMode === "login" ? "Don't have an account? " : "Already have an account? "}
+              <button onClick={toggleAuthMode} className="text-primary hover:underline bg-transparent border-none">
+                {authMode === "login" ? "Sign up" : "Sign in"}
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
+

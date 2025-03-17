@@ -36,7 +36,7 @@ export default function Home() {
 
         // Sau khi transition hoàn tất (1000ms)
         setTimeout(() => {
-          if (isTransitioning) {
+          if (!isTransitioning) {
             setCurrentPoster(next);
           } else {
             setNextPoster(nextNext);

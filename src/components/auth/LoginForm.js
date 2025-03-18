@@ -1,13 +1,57 @@
-import Link from "next/link"
+import { useState } from "react"
 import { Mail, Lock, Eye, EyeOff } from "lucide-react"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function LoginForm({ formData, handleChange, showPassword, setShowPassword }) {
+  const [errors, setErrors] = useState({})
+  const { login } = useAuth()
+
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!formData.email?.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Invalid email format'
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
+    try {
+      await login.mutate({
+        email: formData.email,
+        password: formData.password
+      })
+    } catch (err) {
+      console.error('Login failed:', err)
+    }
+  }
+
   return (
     <>
       <h2 className="text-2xl font-bold mb-2">Welcome back</h2>
       <p className="text-muted-foreground mb-6">Sign in to continue to MBCKing</p>
 
-      <form className="space-y-5">
+      {login.error && (
+        <div className="mb-4 p-3 text-sm text-red-500 bg-transparent rounded-lg">
+          {login.error.message || "Login failed. Please try again."}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-1">
           <label htmlFor="email" className="block text-sm font-medium">
             Email
@@ -23,9 +67,12 @@ export default function LoginForm({ formData, handleChange, showPassword, setSho
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="w-full pl-10 pr-4 py-3 bg-input border border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary"
+              className={`w-full pl-10 pr-4 py-3 bg-input border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary ${
+                errors.email ? 'border-red-500' : 'border'
+              }`}
             />
           </div>
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
         </div>
 
         <div className="space-y-1">
@@ -33,9 +80,9 @@ export default function LoginForm({ formData, handleChange, showPassword, setSho
             <label htmlFor="password" className="block text-sm font-medium">
               Password
             </label>
-            <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+            <a href="/forgot-password" className="text-sm text-primary hover:underline">
               Forgot password?
-            </Link>
+            </a>
           </div>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -48,7 +95,9 @@ export default function LoginForm({ formData, handleChange, showPassword, setSho
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              className="w-full pl-10 pr-12 py-3 bg-input border border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary"
+              className={`w-full pl-10 pr-12 py-3 bg-input border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary ${
+                errors.password ? 'border-red-500' : 'border'
+              }`}
             />
             <button
               type="button"
@@ -62,11 +111,17 @@ export default function LoginForm({ formData, handleChange, showPassword, setSho
               )}
             </button>
           </div>
+          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
         </div>
 
-        <Link href="/dashboard" className="primary-button block text-center" style={{ marginTop: '2rem' }}>
-          Sign in
-        </Link>
+        <button
+          type="submit"
+          className="primary-button block w-full text-center"
+          style={{ marginTop: '2rem' }}
+          disabled={login.isLoading}
+        >
+          {login.isLoading ? 'Signing in...' : 'Sign in'}
+        </button>
       </form>
     </>
   )

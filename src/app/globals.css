@@ -1,3 +1,4 @@
+@import "tailwindcss";
 /* Basic reset */
 * {
   margin: 0;
@@ -127,6 +128,10 @@ body {
 
 .mb-8 {
   margin-bottom: 2rem;
+}
+
+.mb-12 {
+  margin-bottom: 3rem;
 }
 
 .mt-2 {
@@ -281,6 +286,10 @@ body {
 
 .font-bold {
   font-weight: 700;
+}
+
+.text-sm {
+  font-size: 0.875rem;
 }
 
 .text-primary {
@@ -879,4 +888,8 @@ button.absolute.inset-y-0.right-0 {
 
 .transition-opacity {
   transition: opacity 500ms ease-in-out;
+}
+
+.hover\:underline {
+  text-decoration: none;
 }

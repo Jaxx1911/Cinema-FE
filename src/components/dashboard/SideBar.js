@@ -4,12 +4,18 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, Search, Ticket, User, Film, Calendar, Heart, Settings, LogOut } from "lucide-react"
 import Image from "next/image"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function Sidebar() {
     const pathname = usePathname()
-
+    const { logout } = useAuth()
     const isActive = (path) => {
         return pathname === path
+    }
+
+    const handleLogout = async (e) => {
+        e.preventDefault()
+        logout()
     }
 
     return (
@@ -19,7 +25,7 @@ export default function Sidebar() {
 
                 <div className="flex items-center gap-3 mb-8 p-3 bg-input rounded-lg">
                     <Image
-                        src="/placeholder.svg?height=40&width=40"
+                        src="/test1.jpg?height=40&width=40"
                         alt="Profile"
                         width={40}
                         height={40}
@@ -55,7 +61,9 @@ export default function Sidebar() {
                     <button className="primary-button text-sm py-2">Upgrade Now</button>
                 </div>
 
-                <button className="flex items-center gap-2 text-red-500 hover:text-red-400 transition-colors">
+                <button className="flex items-center gap-2 text-red-500 hover:text-red-400 transition-colors"
+                    onClick={handleLogout}
+                >
                     <LogOut className="w-5 h-5" />
                     <span>Log out</span>
                 </button>

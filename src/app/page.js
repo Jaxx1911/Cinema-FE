@@ -9,10 +9,11 @@ export default function Home() {
   const [authMode, setAuthMode] = useState("login")
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
-    name: "",
     confirmPassword: "",
+    terms: false
   })
 
   const [currentPoster, setCurrentPoster] = useState(0)
@@ -50,12 +51,37 @@ export default function Home() {
   }, [currentPoster, nextPoster]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    const { name, type, checked, value } = e.target
+    setFormData((prev) => ({
+      ...prev,
+      // Use checked for checkbox, value for other inputs
+      [name]: type === 'checkbox' ? checked : value
+    }))
+  }
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      terms: false
+    })
+    setShowPassword(false)
   }
 
   const toggleAuthMode = () => {
+    resetForm() // Reset form when switching between login and signup
     setAuthMode(authMode === "login" ? "signup" : "login")
+  }
+
+  // Filter formData based on authMode to only pass relevant fields
+  const getFormDataByMode = () => {
+    if (authMode === "login") {
+      const { email, password } = formData
+      return { email, password }
+    }
+    return formData
   }
 
   return (
@@ -102,7 +128,7 @@ export default function Home() {
             <div
               key={index}
               className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                index === currentPoster ? 'bg-primary' : 'bg-white/50'
+                ((index === currentPoster && !isTransitioning) || (index === nextPoster && isTransitioning)) ? 'bg-primary' : 'bg-white/50'
               }`}
             />
           ))}
@@ -119,14 +145,14 @@ export default function Home() {
 
           {authMode === "login" ? (
             <LoginForm
-              formData={formData}
+              formData={getFormDataByMode()}
               handleChange={handleChange}
               showPassword={showPassword}
               setShowPassword={setShowPassword}
             />
           ) : (
             <SignupForm
-              formData={formData}
+              formData={getFormDataByMode()}
               handleChange={handleChange}
               showPassword={showPassword}
               setShowPassword={setShowPassword}

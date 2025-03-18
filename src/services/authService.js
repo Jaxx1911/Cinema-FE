@@ -1,19 +1,68 @@
-const LOGIN_API_URL = 'http://localhost:8000/api/auth/login';
+import axios from 'axios'
+import { tokenStorage } from '@/utils/tokenStorage'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
+
+const authApi = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
 
 export const authService = {
-  login: async (credentials) => {
-    const response = await fetch(LOGIN_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    if (!response.ok) {
-      throw new Error('Login failed');
+  signup: async ({ name, email, password, otp }) => {
+    const response = await authApi.post('/auth/signup', {
+      name,
+      email,
+      password,
+      otp
+    })
+    
+    // If signup successful, store tokens
+    if (response.data.access_token && response.data.refresh_token) {
+      tokenStorage.setTokens(
+        response.data.access_token,
+        response.data.refresh_token
+      )
+      this.setAuthHeader(response.data.access_token)
     }
-
-    return response.json();
+    
+    return response.data
   },
-}; 
+
+  getOTP: async (email) => {
+    const response = await authApi.get(`/auth/otp/${email}`)
+    return response.data
+  },
+
+  resendOTP: async (email) => {
+    const response = await authApi.post('/auth/resend-otp', { email })
+    return response.data
+  },
+
+  login: async (credentials) => {
+    const response = await authApi.post('/auth/login', credentials)
+    
+    // If login successful, store tokens
+    if (response.data.access_token && response.data.refresh_token) {
+      tokenStorage.setTokens(
+        response.data.access_token,
+        response.data.refresh_token
+      )
+      authService.setAuthHeader(response.data.access_token)
+    }
+    
+    return response.data
+  },
+
+  // Add interceptor to handle token
+  setAuthHeader: (token) => {
+    authApi.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  },
+
+  removeAuthHeader: () => {
+    delete authApi.defaults.headers.common['Authorization']
+    tokenStorage.clearTokens()
+  },
+} 

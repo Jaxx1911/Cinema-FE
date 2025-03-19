@@ -52,10 +52,10 @@ export const useAuth = () => {
     },
   })
 
-  const resendOTP = useMutation({
-    mutationFn: (email) => authService.resendOTP(email),
+  const resetOTP = useMutation({
+    mutationFn: (email) => authService.resetOTP(email),
     onError: (error) => {
-      console.error('Resend OTP error:', error)
+      console.error('Reset OTP error:', error)
       throw error
     },
   })
@@ -72,12 +72,12 @@ export const useAuth = () => {
         // Redirect to dashboard
         router.push('/dashboard')
       } else {
-        throw new Error('Login failed: Invalid response from server')
+        return {
+          error: {
+            message: 'Login failed: Invalid response from server'
+          }
+        }
       }
-    },
-    onError: (error) => {
-      console.error('Login error:', error)
-      throw error
     },
   })
 
@@ -89,6 +89,17 @@ export const useAuth = () => {
       // Redirect to login
       router.push('/')
   }
+
+  const resetPassword = useMutation({
+    mutationFn: (credentials) => authService.resetPassword(credentials),
+    onSuccess: () => {
+      window.location.reload()
+    },
+    onError: (error) => {
+      console.error('Reset password error:', error)
+      throw error
+    },
+  })
 
   // Function to check if user is authenticated
   const isAuthenticated = () => {
@@ -103,7 +114,7 @@ export const useAuth = () => {
     }
     return true
   }
-
+  
   return {
     getOTP: {
       mutate: getOTP.mutate,
@@ -120,15 +131,20 @@ export const useAuth = () => {
       isLoading: verifyOTP.isPending,
       error: verifyOTP.error,
     },
-    resendOTP: {
-      mutate: resendOTP.mutate,
-      isLoading: resendOTP.isPending,
-      error: resendOTP.error,
+    resetOTP: {
+      mutate: resetOTP.mutate,
+      isLoading: resetOTP.isPending,
+      error: resetOTP.error,
     },
     login: {
       mutate: login.mutate,
       isLoading: login.isPending,
       error: login.error,
+    },
+    resetPassword: {
+      mutate: resetPassword.mutate,
+      isLoading: resetPassword.isPending,
+      error: resetPassword.error,
     },
     logout,
     isAuthenticated,

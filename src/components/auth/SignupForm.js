@@ -1,10 +1,9 @@
 import { useState } from "react"
-import Link from "next/link"
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react"
 import OTPForm from "./OTPForm"
 import { useAuth } from "@/hooks/useAuth"
 
-export default function SignupForm({ formData, handleChange, showPassword, setShowPassword }) {
+export default function SignupForm({ formData, handleChange, showPassword, setShowPassword, toLoginMode }) {
   const [showOTP, setShowOTP] = useState(false)
   const [errors, setErrors] = useState({})
   const { getOTP, signup } = useAuth()
@@ -50,16 +49,17 @@ export default function SignupForm({ formData, handleChange, showPassword, setSh
     }
 
     try {
-      await getOTP.mutate(formData.email)
+      getOTP.mutate(formData.email)
       setShowOTP(true)
     } catch (err) {
       console.error('Failed to get OTP:', err)
+      setErrors(prev => ({...prev, general: err.message || "Failed to send verification code"}))
     }
   }
 
   const handleVerify = async (otp) => {
     try {
-      await signup.mutate({
+      signup.mutate({
         name: formData.name,
         email: formData.email,
         password: formData.password,
@@ -82,6 +82,7 @@ export default function SignupForm({ formData, handleChange, showPassword, setSh
         isLoading={signup.isLoading}
         error={signup.error}
         email={formData.email}
+        toLoginMode={toLoginMode}
       />
     )
   }
@@ -219,9 +220,9 @@ export default function SignupForm({ formData, handleChange, showPassword, setSh
           </div>
           <label className="flex items-center ml-2 text-sm text-muted-foreground">
             I agree to the{" "}
-            <a href="#" className="text-primary hover:underline">Terms of Service</a>{" "}
+            <a href="#" className="text-primary hover:underline ml-1 mr-1"> Terms of Service </a>{" "}
             and{" "}
-            <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+            <a href="#" className="text-primary hover:underline ml-1"> Privacy Policy </a>
           </label>
         </div>
         {errors.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}

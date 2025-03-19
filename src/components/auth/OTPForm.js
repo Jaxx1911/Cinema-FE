@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { useAuth } from '@/hooks/useAuth'
+import { ChevronLeft } from 'lucide-react'
 
-export default function OTPForm({ onVerify, isLoading, error, email }) {
+export default function OTPForm({ onVerify, isLoading, error, email, toLoginMode }) {
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
+  const { getOTP } = useAuth()
 
   const handleChange = (element, index) => {
     if (isNaN(element.value)) return false
@@ -19,12 +22,21 @@ export default function OTPForm({ onVerify, isLoading, error, email }) {
     onVerify(otp.join(''))
   }
 
+  const handleResendOTP = () => {
+    e.preventDefault()
+    getOTP.mutate(email)
+  }
+
   return (
     <div className="space-y-4">
+      <button onClick={toLoginMode} className="inline-flex items-center gap-2 text-muted-foreground hover:text-white mb-8 cursor-pointer">
+        <ChevronLeft className="w-5 h-5" />
+        <span className="cursor-pointer hover:underline">Back to login</span>
+      </button>
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Verify your email</h2>
         <p className="text-muted-foreground">
-          We've sent a verification code to {email}
+          We've sent a 6-digit code to {email}
         </p>
       </div>
 
@@ -56,6 +68,11 @@ export default function OTPForm({ onVerify, isLoading, error, email }) {
         >
           {isLoading ? 'Verifying...' : 'Verify'}
         </button>
+        <div className="text-center">
+          <button type="button" className="text-primary hover:underline text-sm cursor-pointer" onClick={handleResendOTP}>
+            Didn't receive a code? Resend
+          </button>
+        </div>
       </form>
     </div>
   )

@@ -36,8 +36,8 @@ export const authService = {
     return response.data
   },
 
-  resendOTP: async (email) => {
-    const response = await authApi.post('/auth/resend-otp', { email })
+  resetOTP: async (email) => {
+    const response = await authApi.get(`/auth/reset-otp/${email}`)
     return response.data
   },
 
@@ -53,6 +53,11 @@ export const authService = {
       authService.setAuthHeader(response.data.access_token)
     }
     
+    return response.data
+  },
+
+  resetPassword: async (credentials) => {
+    const response = await authApi.post(`/auth/reset-password`, credentials)
     return response.data
   },
 

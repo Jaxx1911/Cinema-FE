@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import LoginForm from "@/components/auth/LoginForm"
 import SignupForm from "@/components/auth/SignupForm"
+import ForgotPassword from "@/components/auth/ForgotPassword"
 
 export default function Home() {
   const [authMode, setAuthMode] = useState("login")
@@ -75,6 +76,14 @@ export default function Home() {
     setAuthMode(authMode === "login" ? "signup" : "login")
   }
 
+  const forgotPassword = () => {
+    setAuthMode("forgotPassword")
+  }
+
+  const toLoginMode = () => {
+    setAuthMode("login")
+  }
+
   // Filter formData based on authMode to only pass relevant fields
   const getFormDataByMode = () => {
     if (authMode === "login") {
@@ -142,13 +151,17 @@ export default function Home() {
             <h1 className="text-4xl font-bold text-primary mb-2">MBCKing</h1>
             <p className="text-muted-foreground">Your premier cinema experience</p>
           </div>
-
+          {authMode === "forgotPassword" ? (
+            <ForgotPassword toLoginMode={toLoginMode} />
+          ) : (
+            <>
           {authMode === "login" ? (
             <LoginForm
               formData={getFormDataByMode()}
               handleChange={handleChange}
               showPassword={showPassword}
               setShowPassword={setShowPassword}
+              forgotPassword={forgotPassword}
             />
           ) : (
             <SignupForm
@@ -156,17 +169,19 @@ export default function Home() {
               handleChange={handleChange}
               showPassword={showPassword}
               setShowPassword={setShowPassword}
+              toLoginMode={toLoginMode}
             />
           )}
 
           <div className="mt-8 text-center">
             <p className="text-muted-foreground">
               {authMode === "login" ? "Don't have an account? " : "Already have an account? "}
-              <button onClick={toggleAuthMode} className="text-primary hover:underline bg-transparent border-none">
+              <button onClick={toggleAuthMode} className="text-primary hover:underline bg-transparent border-none cursor-pointer">
                 {authMode === "login" ? "Sign up" : "Sign in"}
               </button>
             </p>
           </div>
+          </>)}
         </div>
       </div>
     </div>

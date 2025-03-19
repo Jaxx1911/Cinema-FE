@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Mail, Lock, Eye, EyeOff } from "lucide-react"
 import { useAuth } from "@/hooks/useAuth"
 
-export default function LoginForm({ formData, handleChange, showPassword, setShowPassword }) {
+export default function LoginForm({ formData, handleChange, showPassword, setShowPassword, forgotPassword }) {
   const [errors, setErrors] = useState({})
   const { login } = useAuth()
 
@@ -30,14 +30,18 @@ export default function LoginForm({ formData, handleChange, showPassword, setSho
       return
     }
 
-    try {
-      await login.mutate({
-        email: formData.email,
-        password: formData.password
-      })
-    } catch (err) {
-      console.error('Login failed:', err)
-    }
+    login.mutate({
+      email: formData.email,
+      password: formData.password
+    }, {
+      onError: (err) => {
+        if (err.status === 401) {
+          setErrors(prev => ({...prev, general: "Wrong login credentials"}))
+        } else {
+          setErrors(prev => ({...prev, general: "Login failed. Please try again."}))
+        }
+      }
+    })
   }
 
   return (
@@ -45,9 +49,9 @@ export default function LoginForm({ formData, handleChange, showPassword, setSho
       <h2 className="text-2xl font-bold mb-2">Welcome back</h2>
       <p className="text-muted-foreground mb-6">Sign in to continue to MBCKing</p>
 
-      {login.error && (
+      {errors.general && (
         <div className="mb-4 p-3 text-sm text-red-500 bg-transparent rounded-lg">
-          {login.error.message || "Login failed. Please try again."}
+          {errors.general}
         </div>
       )}
 
@@ -80,9 +84,9 @@ export default function LoginForm({ formData, handleChange, showPassword, setSho
             <label htmlFor="password" className="block text-sm font-medium">
               Password
             </label>
-            <a href="/forgot-password" className="text-sm text-primary hover:underline">
+            <button onClick={forgotPassword} className="text-sm text-primary hover:underline cursor-pointer">
               Forgot password?
-            </a>
+            </button>
           </div>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -116,7 +120,7 @@ export default function LoginForm({ formData, handleChange, showPassword, setSho
 
         <button
           type="submit"
-          className="primary-button block w-full text-center"
+          className="primary-button block w-full text-center cursor-pointer"
           style={{ marginTop: '2rem' }}
           disabled={login.isLoading}
         >

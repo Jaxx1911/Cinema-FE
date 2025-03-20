@@ -1,8 +1,8 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Star } from "lucide-react"
+import { Clock } from "lucide-react"
 
-export default function MovieCard({ id, title, image, genres, rating, size = "medium" }) {
+export default function MovieCard({ id, title, image, genres, duration, size = "medium" }) {
     const sizeClasses = {
         small: {
             container: "w-[180px]",
@@ -29,8 +29,8 @@ export default function MovieCard({ id, title, image, genres, rating, size = "me
                     className={`rounded-lg w-full ${sizeClasses[size].image} object-cover`}
                 />
                 <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-black/60 rounded-md px-2 py-1">
-                    <Star className="w-3 h-3 fill-primary text-primary" />
-                    <span className="text-xs font-medium">{rating}</span>
+                    <Clock className="w-3 h-3 fill-primary text-primary" />
+                    <span className="text-xs font-medium">{duration + " min"}</span>
                 </div>
             </div>
             <h3 className="text-sm font-medium line-clamp-1">{title}</h3>

@@ -1,43 +1,56 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronRight, Play } from "lucide-react"
+import { ChevronRight, Play, X } from "lucide-react"
 import MovieCard from "@/components/dashboard/MovieCard"
+import { useState } from "react"
 
 export default function Dashboard() {
+    const [showTrailer, setShowTrailer] = useState(false)
+
+    const openTrailer = () => {
+        setShowTrailer(true)
+    }
+
+    const closeTrailer = () => {
+        setShowTrailer(false)
+    }
+
     // Sample data
     const nowPlaying = [
         {
             id: "1",
             title: "Avengers: Infinity War",
-            image: "/placeholder.svg?height=300&width=220",
+            image: "/test1.jpg?height=300&width=220",
             genres: ["Action", "Adventure", "Sci-Fi"],
             rating: 4.8,
         },
         {
             id: "2",
             title: "Black Panther",
-            image: "/placeholder.svg?height=300&width=220",
+            image: "/test1.jpg?height=300&width=220",
             genres: ["Action", "Adventure"],
             rating: 4.5,
         },
         {
             id: "3",
             title: "Guardians of The Galaxy",
-            image: "/placeholder.svg?height=300&width=220",
+            image: "/test1.jpg?height=300&width=220",
             genres: ["Action", "Comedy", "Sci-Fi"],
             rating: 4.7,
         },
         {
             id: "4",
             title: "Doctor Strange",
-            image: "/placeholder.svg?height=300&width=220",
+            image: "/test1.jpg?height=300&width=220",
             genres: ["Action", "Fantasy"],
             rating: 4.4,
         },
         {
             id: "5",
             title: "Thor: Ragnarok",
-            image: "/placeholder.svg?height=300&width=220",
+            image: "/test1.jpg?height=300&width=220",
             genres: ["Action", "Comedy", "Fantasy"],
             rating: 4.6,
         },
@@ -47,35 +60,35 @@ export default function Dashboard() {
         {
             id: "6",
             title: "Shazam!",
-            image: "/placeholder.svg?height=300&width=220",
+            image: "/test1.jpg?height=300&width=220",
             genres: ["Action", "Comedy", "Fantasy"],
             rating: 4.2,
         },
         {
             id: "7",
             title: "Aquaman",
-            image: "/placeholder.svg?height=300&width=220",
+            image: "/test1.jpg?height=300&width=220",
             genres: ["Action", "Adventure", "Fantasy"],
             rating: 4.3,
         },
         {
             id: "8",
             title: "Captain Marvel",
-            image: "/placeholder.svg?height=300&width=220",
+            image: "/test1.jpg?height=300&width=220",
             genres: ["Action", "Adventure", "Sci-Fi"],
             rating: 4.4,
         },
         {
             id: "9",
             title: "Spider-Man: Far From Home",
-            image: "/placeholder.svg?height=300&width=220",
+            image: "/test1.jpg?height=300&width=220",
             genres: ["Action", "Adventure"],
             rating: 4.5,
         },
         {
             id: "10",
             title: "Joker",
-            image: "/placeholder.svg?height=300&width=220",
+            image: "/test1.jpg?height=300&width=220",
             genres: ["Crime", "Drama", "Thriller"],
             rating: 4.7,
         },
@@ -84,13 +97,14 @@ export default function Dashboard() {
     const featuredMovie = {
         id: "1",
         title: "Avengers: Infinity War",
-        image: "/placeholder.svg?height=600&width=1200",
+        image: "/test1.jpg?height=600&width=1200",
         description:
             "The Avengers and their allies must be willing to sacrifice all in an attempt to defeat the powerful Thanos before his blitz of devastation and ruin puts an end to the universe.",
         rating: 4.8,
         genres: ["Action", "Adventure", "Sci-Fi"],
         duration: "149 min",
         releaseYear: "2018",
+        trailerUrl: "https://www.youtube.com/embed/6ZfuNTqbHE8",
     }
 
     return (
@@ -98,7 +112,7 @@ export default function Dashboard() {
             <div className="mb-12">
                 <div className="relative rounded-xl overflow-hidden">
                     <Image
-                        src={featuredMovie.image || "/placeholder.svg"}
+                        src={featuredMovie.image || "/test1.jpg"}
                         alt={featuredMovie.title}
                         width={1200}
                         height={600}
@@ -116,15 +130,42 @@ export default function Dashboard() {
                             <div className="bg-black/40 rounded-md px-2 py-1">{featuredMovie.releaseYear}</div>
                         </div>
                         <div className="flex gap-4">
-                            <Link href={`/movie/${featuredMovie.id}`} className="primary-button w-auto inline-block px-6">
+                            <Link
+                                href={`/movie/${featuredMovie.id}`}
+                                className="flex-1 px-6 py-3 w-16 h-16 bg-amber-400 text-black rounded-full hover:bg-amber-500 flex items-center justify-center"
+                            >
                                 Book tickets
                             </Link>
-                            <button className="secondary-button w-auto inline-flex items-center gap-2 px-6">
-                                <Play className="w-4 h-4" /> Watch trailer
+                            <button
+                                onClick={openTrailer}
+                                className="flex-1 px-6 py-3 w-16 h-16 bg-white text-black rounded-full hover:bg-gray-100 flex items-center justify-center gap-2"
+                            >
+                                <Play className="w-4 h-4" /> Watch Trailer
                             </button>
                         </div>
+                        {showTrailer && (
+                            <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+                                <div className="relative w-full max-w-4xl aspect-video bg-black">
+                                    <button
+                                        onClick={closeTrailer}
+                                        className="absolute -top-10 right-0 text-white hover:text-gray-300"
+                                        aria-label="Close trailer"
+                                    >
+                                        <X size={24} />
+                                    </button>
+                                    <iframe
+                                        src={featuredMovie.trailerUrl}
+                                        className="w-full h-full"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        title={`${featuredMovie.title} Trailer`}
+                                    ></iframe>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
+
             </div>
 
             <div className="mb-12">

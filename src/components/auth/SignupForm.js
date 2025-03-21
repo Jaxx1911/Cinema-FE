@@ -90,7 +90,7 @@ export default function SignupForm({ formData, handleChange, showPassword, setSh
   return (
     <>
       <h2 className="text-2xl font-bold mb-2">Create account</h2>
-      <p className="text-muted-foreground mb-6">Sign up to join MBCKing</p>
+      <p className="text-muted-foreground mb-6">Sign up to join BNC</p>
 
       {getOTP.error && (
         <div className="mb-4 p-3 text-sm text-red-500 bg-transparent rounded-lg">

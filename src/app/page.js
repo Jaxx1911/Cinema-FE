@@ -5,8 +5,11 @@ import Image from "next/image"
 import LoginForm from "@/components/auth/LoginForm"
 import SignupForm from "@/components/auth/SignupForm"
 import ForgotPassword from "@/components/auth/ForgotPassword"
-
+import { redirect } from "next/navigation"
 export default function Home() {
+  if (localStorage.getItem("access_token")) {
+    redirect("/dashboard")
+  }
   const [authMode, setAuthMode] = useState("login")
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -148,7 +151,7 @@ export default function Home() {
       <div className="w-full lg:w-1/3 flex items-center justify-center p-6 bg-black">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-primary mb-2">MBCKing</h1>
+            <h1 className="text-4xl font-bold text-primary mb-2">BNC Cinema</h1>
             <p className="text-muted-foreground">Your premier cinema experience</p>
           </div>
           {authMode === "forgotPassword" ? (

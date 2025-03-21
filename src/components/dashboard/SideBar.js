@@ -19,7 +19,7 @@ export default function Sidebar() {
     }
 
     return (
-        <div className="w-64 h-screen bg-card border-r border fixed left-0 top-0 flex flex-col">
+        <div className="w-68 h-screen bg-card border-r border fixed left-0 top-0 flex flex-col">
             <div className="p-6">
                 <h1 className="text-2xl font-bold text-primary mb-8">MBCKing</h1>
 
@@ -41,7 +41,7 @@ export default function Sidebar() {
                     <h2 className="text-xs uppercase text-muted-foreground mb-2 px-3">Menu</h2>
                     <SidebarLink href="/dashboard" icon={<Home />} label="Home" active={isActive("/dashboard")} />
                     <SidebarLink href="/movies" icon={<Film />} label="Movies" active={isActive("/movies")} />
-                    <SidebarLink href="/showtimes" icon={<Calendar />} label="Showtimes" active={isActive("/showtimes")} />
+                    <SidebarLink href="/showtimes" icon={<Calendar />} label="Showtimes" active={isActive("/cinemas")} />
                     <SidebarLink href="/search" icon={<Search />} label="Search" active={isActive("/search")} />
                 </div>
 

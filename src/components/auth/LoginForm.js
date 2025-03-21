@@ -47,7 +47,7 @@ export default function LoginForm({ formData, handleChange, showPassword, setSho
   return (
     <>
       <h2 className="text-2xl font-bold mb-2">Welcome back</h2>
-      <p className="text-muted-foreground mb-6">Sign in to continue to MBCKing</p>
+      <p className="text-muted-foreground mb-6">Sign in to continue to BNC</p>
 
       {errors.general && (
         <div className="mb-4 p-3 text-sm text-red-500 bg-transparent rounded-lg">

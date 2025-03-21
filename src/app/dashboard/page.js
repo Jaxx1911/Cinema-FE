@@ -5,21 +5,22 @@ import Image from "next/image"
 import { ChevronRight, Play, X } from "lucide-react"
 import MovieCard from "@/components/dashboard/MovieCard"
 import { useState } from "react"
-import { useMovie } from "@/hooks/useMovie"
+import { useNowPlaying, useComingSoon } from "@/hooks/useMovie"
 
 export default function Dashboard() {
-    const { getNowPlaying, getComingSoon } = useMovie()
+    const { data: nowPlayingData, isLoading: isLoadingNowPlaying } = useNowPlaying()
+    const { data: comingSoonData } = useComingSoon()
     const [showTrailer, setShowTrailer] = useState(false)
 
     // Di chuyển kiểm tra loading xuống đây, sau khi tất cả hooks đã được khai báo
-    if (getNowPlaying.isLoading) {
+    if (isLoadingNowPlaying) {
         return <div>Loading...</div>
     }
 
     // Truy cập data trực tiếp
-    const movies = getNowPlaying.data?.body || []
+    const movies = nowPlayingData?.body || []
 
-    const comingSoon = getComingSoon.data?.body || []
+    const comingSoon = comingSoonData?.body || []
 
     const openTrailer = () => {
         setShowTrailer(true)
@@ -52,7 +53,7 @@ export default function Dashboard() {
                         </div>
                         <div className="flex gap-4">
                             <Link
-                                href={`/movie/${featuredMovie.id}`}
+                                href={`/movies/${featuredMovie.id}`}
                                 className="flex-1 px-6 py-3 w-16 h-16 bg-amber-400 text-black rounded-full hover:bg-amber-500 flex items-center justify-center"
                             >
                                 Book tickets

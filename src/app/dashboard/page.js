@@ -151,7 +151,7 @@ export default function Dashboard() {
             <div className="mb-12">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold">Now Playing</h2>
-                    <Link href="/movies" className="text-primary flex items-center gap-1 hover:underline">
+                    <Link href="/now-playing" className="text-primary flex items-center gap-1 hover:underline">
                         <span>View all</span>
                         <ChevronRight className="w-4 h-4" />
                     </Link>

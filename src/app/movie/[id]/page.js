@@ -58,6 +58,7 @@ export default function MovieDetailPage() {
     <div className="flex flex-col min-h-screen bg-black text-white">
       {/* Hero Banner */}
       <div className="relative w-full h-[50vh] md:h-[60vh]">
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-10" />
         <div className="absolute inset-0">
           <Image src={movie.bannerUrl || "/test1.jpg"} alt={movie.title} fill className="object-cover" priority />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black" />

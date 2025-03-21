@@ -118,8 +118,9 @@ export default function Dashboard() {
                         height={600}
                         className="w-full h-[500px] object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent flex flex-col justify-end p-8">
-                        <h2 className="text-4xl font-bold mb-2">{featuredMovie.title}</h2>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-10" />
+                    <div className="absolute inset-0 flex flex-col justify-end p-8 z-20">
+                        <h2 className="text-4xl font-bold text-white mb-2">{featuredMovie.title}</h2>
                         <p className="text-white/80 mb-4 max-w-2xl">{featuredMovie.description}</p>
                         <div className="flex items-center gap-4 mb-6">
                             <div className="flex items-center gap-1 bg-black/40 rounded-md px-2 py-1">
@@ -143,29 +144,8 @@ export default function Dashboard() {
                                 <Play className="w-4 h-4" /> Watch Trailer
                             </button>
                         </div>
-                        {showTrailer && (
-                            <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-                                <div className="relative w-full max-w-4xl aspect-video bg-black">
-                                    <button
-                                        onClick={closeTrailer}
-                                        className="absolute -top-10 right-0 text-white hover:text-gray-300"
-                                        aria-label="Close trailer"
-                                    >
-                                        <X size={24} />
-                                    </button>
-                                    <iframe
-                                        src={featuredMovie.trailerUrl}
-                                        className="w-full h-full"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                        allowFullScreen
-                                        title={`${featuredMovie.title} Trailer`}
-                                    ></iframe>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
-
             </div>
 
             <div className="mb-12">
@@ -211,6 +191,28 @@ export default function Dashboard() {
                     ))}
                 </div>
             </div>
+
+            {/* Trailer Modal */}
+            {showTrailer && (
+                <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+                    <div className="relative w-full max-w-4xl aspect-video bg-black">
+                        <button
+                            onClick={closeTrailer}
+                            className="absolute -top-10 right-0 text-white hover:text-gray-300"
+                            aria-label="Close trailer"
+                        >
+                            <X size={24} />
+                        </button>
+                        <iframe
+                            src={featuredMovie.trailerUrl}
+                            className="w-full h-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            title={`${featuredMovie.title} Trailer`}
+                        ></iframe>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

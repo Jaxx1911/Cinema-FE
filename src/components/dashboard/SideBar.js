@@ -19,7 +19,7 @@ export default function Sidebar() {
 
                 <div className="flex items-center gap-3 mb-8 p-3 bg-input rounded-lg">
                     <Image
-                        src="/placeholder.svg?height=40&width=40"
+                        src="/test1.jpg?height=40&width=40"
                         alt="Profile"
                         width={40}
                         height={40}

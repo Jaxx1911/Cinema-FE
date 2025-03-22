@@ -6,6 +6,7 @@ import LoginForm from "@/components/auth/LoginForm"
 import SignupForm from "@/components/auth/SignupForm"
 import ForgotPassword from "@/components/auth/ForgotPassword"
 import { redirect } from "next/navigation"
+
 export default function Home() {
   if (localStorage.getItem("access_token")) {
     redirect("/dashboard")

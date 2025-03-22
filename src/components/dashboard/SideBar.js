@@ -41,7 +41,7 @@ export default function Sidebar() {
                     <h2 className="text-xs uppercase text-muted-foreground mb-2 px-3">Menu</h2>
                     <SidebarLink href="/dashboard" icon={<Home />} label="Home" active={isActive("/dashboard")} />
                     <SidebarLink href="/movies" icon={<Film />} label="Movies" active={isActive("/movies")} />
-                    <SidebarLink href="/showtimes" icon={<Calendar />} label="Showtimes" active={isActive("/cinemas")} />
+                    <SidebarLink href="/cinemas" icon={<Calendar />} label="Cinemas" active={isActive("/cinemas")} />
                     <SidebarLink href="/search" icon={<Search />} label="Search" active={isActive("/search")} />
                 </div>
 
@@ -55,12 +55,6 @@ export default function Sidebar() {
             </div>
 
             <div className="mt-auto p-6">
-                <div className="p-4 bg-input rounded-lg mb-6">
-                    <p className="text-sm font-medium mb-2">Upgrade to Premium</p>
-                    <p className="text-xs text-muted-foreground mb-3">Get access to exclusive movies and discounts</p>
-                    <button className="primary-button text-sm py-2">Upgrade Now</button>
-                </div>
-
                 <button className="flex items-center gap-2 text-red-500 hover:text-red-400 transition-colors"
                     onClick={handleLogout}
                 >

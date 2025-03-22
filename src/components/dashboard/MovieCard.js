@@ -19,7 +19,7 @@ export default function MovieCard({ id, title, image, genres, duration, size = "
     }
 
     return (
-        <Link href={`/movie/${id}`} className={`block ${sizeClasses[size].container} flex-shrink-0 movie-card`}>
+        <Link href={`/movies/${id}`} className={`block ${sizeClasses[size].container} flex-shrink-0 movie-card`}>
             <div className="relative mb-3">
                 <Image
                     src={image || "/placeholder.svg"}

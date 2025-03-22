@@ -12,12 +12,10 @@ export default function Dashboard() {
     const { data: comingSoonData } = useComingSoon()
     const [showTrailer, setShowTrailer] = useState(false)
 
-    // Di chuyển kiểm tra loading xuống đây, sau khi tất cả hooks đã được khai báo
     if (isLoadingNowPlaying) {
         return <div>Loading...</div>
     }
 
-    // Truy cập data trực tiếp
     const movies = nowPlayingData?.body || []
 
     const comingSoon = comingSoonData?.body || []

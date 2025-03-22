@@ -24,7 +24,7 @@ export const movieService = {
         return response.data
     },
     getMovieDetails: async (movieId) => {
-        const response = await movieApi.get(`/movies/${movieId}`)
+        const response = await movieApi.get(`/movie/${movieId}`)
         return response.data
     },
     getMovieTrailer: async (movieId) => {

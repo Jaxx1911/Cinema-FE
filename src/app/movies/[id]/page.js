@@ -111,7 +111,7 @@ export default function MovieDetailPage() {
                   <h1 className="text-4xl md:text-5xl font-bold mb-4">{movies.title}</h1>
                 </div>
                 <div className="flex flex-wrap items-center gap-4 mb-6">
-
+                  <Tag movieTag={movies.tag} />
                   <div className="flex items-center gap-2 bg-card rounded-full px-4 py-2">
                     <Clock className="w-5 h-5 text-primary" />
                     <span>{movies.duration} min</span>
@@ -133,7 +133,7 @@ export default function MovieDetailPage() {
                   <h2 className="text-xl font-semibold mb-2">Directors</h2>
                   <div className="flex gap-6">
                     {movies?.director?.split(',').map((name, index) => (
-                      <div key={index} className="flex items-center gap-3 name-card hover:underline transition-all duration-300">
+                      <div key={index} className="flex items-center gap-3 name-card hover:underline transition-all duration-300 text-gray-300">
                         <p>{name}</p>
                       </div>
                     ))}
@@ -145,7 +145,7 @@ export default function MovieDetailPage() {
                   <h2 className="text-xl font-semibold mb-2">Caster</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {movies?.caster?.split(',').map((name, index) => (
-                      <div key={index} className="flex items-center gap-3 name-card hover:underline transition-all duration-300">  
+                      <div key={index} className="flex items-center gap-3 name-card hover:underline transition-all duration-300 text-gray-300">  
                         <p>{name}</p>
                       </div>
                     ))}
@@ -209,4 +209,20 @@ export default function MovieDetailPage() {
       )}
     </div>
   )
+}
+
+export function Tag({movieTag}) {
+  if (movieTag === "P") {
+    return <div className="bg-tag-p rounded-full px-4 py-2 bg-tag-p">P</div>
+  } else if (movieTag === "K") {
+    return <div className="bg-tag-k rounded-full px-4 py-2 bg-tag-k">K</div>
+  } else if (movieTag === "C13") {
+    return <div className="bg-tag-c13 rounded-full px-4 py-2 bg-tag-c13">C13</div>
+  } else if (movieTag === "C16") {
+    return <div className="bg-tag-c16 rounded-full px-4 py-2 bg-tag-c16">C16</div>
+  } else if (movieTag === "C18") {
+    return <div className="bg-tag-c18 rounded-full px-4 py-2 bg-tag-c18">C18</div>
+  } else {
+    return <></>
+  }
 }

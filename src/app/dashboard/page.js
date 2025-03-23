@@ -41,8 +41,11 @@ export default function Dashboard() {
                         height={600}
                         className="w-full h-[500px] object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-via to-transparent flex flex-col justify-end p-8">
-                        <h2 className="text-4xl font-bold mb-2">{featuredMovie.title}</h2>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent flex flex-col justify-end p-8 z-10">
+                        <div className="flex items-center gap-2">
+                            <h2 className="text-4xl font-bold mb-2">{featuredMovie.title}</h2>
+                            <Tag movieTag={featuredMovie.tag} />
+                        </div>
                         <p className="text-white/80 mb-4 max-w-2xl">{featuredMovie.description}</p>
                         <div className="flex items-center gap-4 mb-6">
                             {featuredMovie.genres.map(genre => (
@@ -52,13 +55,13 @@ export default function Dashboard() {
                         <div className="flex gap-4">
                             <Link
                                 href={`/movies/${featuredMovie.id}`}
-                                className="flex-1 px-6 py-3 w-16 h-16 bg-amber-400 text-black rounded-full hover:bg-amber-500 flex items-center justify-center"
+                                className="primary-button w-auto inline-block px-6"
                             >
                                 Book tickets
                             </Link>
                             <button
                                 onClick={openTrailer}
-                                className="flex-1 px-6 py-3 w-16 h-16 bg-white text-black rounded-full hover:bg-gray-100 flex items-center justify-center gap-2"
+                                className="secondary-button w-auto justify-center inline-flex items-center gap-2 px-6"
                             >
                                 <Play className="w-4 h-4" /> Watch Trailer
                             </button>
@@ -105,6 +108,7 @@ export default function Dashboard() {
                             image={movie.poster_url}
                             genres={movie.genres}
                             duration={movie.duration}
+                            movieTag={movie.tag}
                         />
                     ))}
                 </div>
@@ -127,10 +131,27 @@ export default function Dashboard() {
                             image={movie.poster_url}
                             genres={movie.genres}
                             duration={movie.duration}
+                            movieTag={movie.tag}
                         />
                     ))}
                 </div>
             </div>
         </div>
     )
+}
+
+export function Tag({movieTag}) {
+    if (movieTag === "P") {
+        return <div className="bg-tag-p rounded px-4 py-2 bg-tag-p">P</div>
+    } else if (movieTag === "K") {
+        return <div className="bg-tag-k rounded px-4 py-2 bg-tag-k">K</div>
+    } else if (movieTag === "C13") {
+        return <div className="bg-tag-c13 rounded px-4 py-2 bg-tag-c13">C13</div>
+    } else if (movieTag === "C16") {
+        return <div className="bg-tag-c16 rounded px-4 py-2 bg-tag-c16">C16</div>
+    } else if (movieTag === "C18") {
+        return <div className="bg-tag-c18 rounded px-4 py-2 bg-tag-c18">C18</div>
+    } else {
+        return <></>
+    }
 }

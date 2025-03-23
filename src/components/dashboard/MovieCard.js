@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Clock } from "lucide-react"
 
-export default function MovieCard({ id, title, image, genres, duration, size = "medium" }) {
+export default function MovieCard({ id, title, image, genres, duration, size = "medium", movieTag}) {
     const sizeClasses = {
         small: {
             container: "w-[180px]",
@@ -21,6 +21,7 @@ export default function MovieCard({ id, title, image, genres, duration, size = "
     return (
         <Link href={`/movies/${id}`} className={`block ${sizeClasses[size].container} flex-shrink-0 movie-card`}>
             <div className="relative mb-3">
+                <Tag movieTag={movieTag} />
                 <Image
                     src={image || "/placeholder.svg"}
                     alt={title}
@@ -39,3 +40,40 @@ export default function MovieCard({ id, title, image, genres, duration, size = "
     )
 }
 
+export function Tag({movieTag}) {
+    if (movieTag === "P") {
+        return (
+            <div className="absolute top-2 left-2 flex items-center justify-center gap-1 bg-tag-p rounded-md px-2 py-1 w-8 h-7">
+                <span className="text-xs font-medium">{movieTag}</span>
+            </div>
+        )
+    } else if (movieTag === "K") {
+        return (
+            <div className="absolute top-2 left-2 flex items-center justify-center gap-1 bg-tag-k rounded-md px-2 py-1 w-8 h-8">
+                <span className="text-xs font-medium">{movieTag}</span>
+            </div>
+        )
+    } else if (movieTag === "C13") {
+        return (
+            <div className="absolute top-2 left-2 flex items-center justify-center gap-1 bg-tag-c13 rounded-md px-2 py-1 w-8 h-8">
+                <span className="text-xs font-medium">{movieTag}</span>
+            </div>
+        )
+    } else if (movieTag === "C16") {
+        return (
+            <div className="absolute top-2 left-2 flex items-center justify-center gap-1 bg-tag-c16 rounded-md px-2 py-1 w-8 h-8">
+                <span className="text-xs font-medium">{movieTag}</span>
+            </div>
+        )
+    } else if (movieTag === "C18") {
+        return (
+            <div className="absolute top-2 left-2 flex items-center justify-center gap-1 bg-tag-c18 rounded-md px-2 py-1 w-8 h-8">
+                <span className="text-xs font-medium">{movieTag}</span>
+            </div>
+        )
+    } else {
+        return (
+            <></>
+        )
+    }
+}   

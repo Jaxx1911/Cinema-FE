@@ -13,6 +13,10 @@ const protectedRoutes = [
   // Add any other protected routes here
 ]
 
+const publicRoutes = [
+  '/',
+]
+
 export default function ClientLayout({ children }) {
   const pathname = usePathname()
   const router = useRouter()
@@ -24,7 +28,19 @@ export default function ClientLayout({ children }) {
       const isProtectedRoute = protectedRoutes.some(route => 
         pathname.startsWith(route)
       )
+
+      const isPublicRoute = publicRoutes.some(route => 
+        pathname === route
+      )
       
+      if (isPublicRoute) {
+        // Check for token
+        const hasTokens = tokenStorage.hasTokens()
+        
+        if (hasTokens) {
+          router.replace('/dashboard')
+        }
+      }
       if (isProtectedRoute) {
         // Check for token
         const hasTokens = tokenStorage.hasTokens()

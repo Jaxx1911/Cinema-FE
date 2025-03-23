@@ -448,6 +448,7 @@ body {
 
 .secondary-button:hover {
   background-color: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
 }
 
 .bg-card {
@@ -486,6 +487,38 @@ body {
   background-color: black;
 }
 
+.bg-amber-400 {
+  background-color: #fcc434;
+}
+
+.bg-amber-500 {
+  background-color: #fc9534;
+}
+
+.bg-amber-500:hover {
+  background-color: #fc9534;
+}
+
+.bg-tag-p{
+  background-color: #197c00;
+}
+
+.bg-tag-k{
+  background-color: #008db1;
+}
+
+.bg-tag-c13{
+  background-color: #d1c300;
+}
+
+.bg-tag-c16{
+  background-color: #faab00;
+}
+
+.bg-tag-c18{
+  background-color: #ff0000;
+}
+
 .bg-background {
   background-color: var(--background);
 }
@@ -522,6 +555,14 @@ body {
   border-color: var(--primary);
 }
 
+.border-gray-400 {
+  border-color: #d1d5db;
+}
+
+.border-gray-500 {
+  border-color: #6b7280;
+}
+
 .border-gray-600 {
   border-color: #6b7280;
 }
@@ -532,6 +573,10 @@ body {
 
 .border-gray-800 {
   border-color: #374151;
+}
+
+.border-gray-900 {
+  border-color: #1f2937;
 }
 
 .shadow-lg {
@@ -991,6 +1036,30 @@ input:focus {
   margin-top: 1.5rem;
 }
 
+.space-x-1 > * + * {
+  margin-left: 0.25rem;
+}
+
+.space-x-2 > * + * {
+  margin-left: 0.5rem;
+}
+
+.space-x-3 > * + * {
+  margin-left: 0.75rem;
+}
+
+.space-x-4 > * + * {
+  margin-left: 1rem;
+}
+
+.space-x-5 > * + * {
+  margin-left: 1.25rem;
+}
+
+.space-x-6 > * + * {
+  margin-left: 1.5rem;
+}
+
 /* Button styles */
 .primary-button {
   background-color: #fcc434;
@@ -1009,6 +1078,27 @@ input:focus {
 }
 
 .primary-button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.secondary-button {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: white;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  width: 100%;
+  transition: all 0.2s ease;
+  text-align: center;
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.secondary-button:hover {
   opacity: 0.9;
   transform: translateY(-2px);
 }
@@ -1152,4 +1242,16 @@ button.absolute.inset-y-0.right-0 {
 
 .sm\:text-base {
   font-size: 1rem;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.items-center {
+  align-items: center;
 }

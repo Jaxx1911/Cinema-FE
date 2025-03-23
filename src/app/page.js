@@ -8,9 +8,6 @@ import ForgotPassword from "@/components/auth/ForgotPassword"
 import { redirect } from "next/navigation"
 
 export default function Home() {
-  if (localStorage.getItem("access_token")) {
-    redirect("/dashboard")
-  }
   const [authMode, setAuthMode] = useState("login")
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({

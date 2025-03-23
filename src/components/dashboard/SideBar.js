@@ -10,7 +10,7 @@ export default function Sidebar() {
     const pathname = usePathname()
     const { logout } = useAuth()
     const isActive = (path) => {
-        return pathname === path
+        return pathname.includes(path)
     }
 
     const handleLogout = async (e) => {

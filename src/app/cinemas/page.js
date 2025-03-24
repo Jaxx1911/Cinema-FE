@@ -131,9 +131,9 @@ export default function CinemasPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
         {cinemas.map((cinema) => (
-          <Link href={`/cinema/${cinema.id}`} key={cinema.id} className="block">
+          <Link href={`/cinemas/${cinema.id}`} key={cinema.id} className="block">
             <div className="bg-card rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative h-48">
                 <Image src={cinema.image || "/placeholder.svg"} alt={cinema.name} fill className="object-cover" />

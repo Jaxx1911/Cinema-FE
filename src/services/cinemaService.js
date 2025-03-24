@@ -10,8 +10,8 @@ const cinemaApi = axios.create({
 })
 
 export const cinemaService = {
-    getCinemas: async () => {
-        const response = await cinemaApi.get('/cinema')
+        getCinemas: async (city) => {
+        const response = await cinemaApi.get(`/cinema?city=${city}`)
         return response.data
     },
     getCinemaById: async (id) => {

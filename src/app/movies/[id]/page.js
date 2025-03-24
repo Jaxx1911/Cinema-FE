@@ -11,6 +11,8 @@ import { useGetCinemas } from "@/hooks/useCinema"
 import { format, parseISO } from 'date-fns'
 import SelectCinema from "@/components/movie/detail/selectCinema"
 import SelectRoomType from "@/components/movie/detail/selectRoomType"
+import SelectCity from "@/components/movie/detail/selectCity"
+
 export default function MovieDetailPage() {
   const params = useParams()
   const [showTrailer, setShowTrailer] = useState(false)
@@ -25,17 +27,25 @@ export default function MovieDetailPage() {
   })
 
   const { data: movieDetails, isLoading } = useMovieDetails(params.id)
-  const { data: cinemas, isLoading: isCinemasLoading } = useGetCinemas()
+
+  const [selectedCity, setSelectedCity] = useState({ id: 1, name: "Hà Nội", value: "hanoi" })
+  const { data: cinemas, isLoading: isCinemasLoading, refetch: refetchCinemas } = useGetCinemas(selectedCity?.value)
 
   const [selectedCinema, setSelectedCinema] = useState(null)
   const [roomType, setRoomType] = useState({ id: 1, name: "2D" })
   const { data: showtimes, isLoading: isShowtimesLoading, refetch: refetchShowtimes } = useGetShowtimeByUserFilter(selectedCinema?.id, params.id, format(new Date(), 'dd-MM-yyyy'))
 
-  
+  useEffect(() => {
+    if (selectedCity?.value) {
+      refetchCinemas()
+    }
+  }, [selectedCity])
 
   useEffect(() => {
     if (cinemas?.body?.length > 0) {
       setSelectedCinema(cinemas.body?.[0])
+    } else {
+      setSelectedCinema(null)
     }
   }, [cinemas])
 
@@ -151,38 +161,36 @@ export default function MovieDetailPage() {
                     ))}
                   </div>
                 </div>
-
-                {/* Showtimes */}
-                <div className="mt-8">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold">Showtimes Today</h2>
-                    <div className="flex items-center gap-2">
-                      <SelectRoomType selected={roomType} setSelected={setRoomType} />
-                      <SelectCinema selected={selectedCinema} setSelected={setSelectedCinema} cinemas={cinemas} />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-                    {showtimes?.body?.filter((showtime) => showtime.room.type === roomType.name).length > 0 ? (
-                      showtimes?.body?.filter((showtime) => showtime.room.type === roomType.name).map((showtime) => (
-                        <button
-                          key={showtime.id}
-                          className={`p-4 rounded-lg text-center bg-gray-800 hover:bg-gray-700 transition-colors`}
-                        >
-                        <p className="font-medium">{format(parseISO(showtime.start_time), 'HH:mm')}</p>
-                        <p className="text-sm text-gray-400">{showtime.room.name}</p>
-                      </button>
-                    ))) : (
-                      <p className="text-gray-400">No showtimes available</p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-between items-center mb-4" style={{height: 200}}>
-
-                </div>
               </div>
             </div>
           </div>
+          {/* Showtimes */}
+          <div className="max-w-8xl mx-auto px-8 mt-16 relative z-10">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Showtimes</h2>
+                <div className="flex items-center gap-2">
+                  <SelectRoomType selected={roomType} setSelected={setRoomType} />
+                  <SelectCinema selected={selectedCinema} setSelected={setSelectedCinema} cinemas={cinemas} />
+                  <SelectCity selected={selectedCity} setSelected={setSelectedCity}/>
+                </div>
+            </div>      
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+              {showtimes?.body?.filter((showtime) => showtime.room.type === roomType.name).length > 0 ? (
+                showtimes?.body?.filter((showtime) => showtime.room.type === roomType.name).map((showtime) => (
+                  <button
+                    key={showtime.id}
+                    className={`p-4 rounded-lg text-center bg-gray-800 hover:bg-gray-700 transition-colors`}
+                  >
+                    <p className="font-medium">{format(parseISO(showtime.start_time), 'HH:mm')}</p>
+                    <p className="text-sm text-gray-400">{showtime.room.name}</p>
+                  </button>
+                ))) : (
+                  <p className="text-gray-400">No showtimes available</p>
+                )}
+              </div>
+            </div>
+            <div className="flex justify-between items-center mb-4" style={{height: 200}}></div>
 
           {/* Trailer Modal */}
           {showTrailer && (

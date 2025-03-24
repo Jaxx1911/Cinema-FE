@@ -1,10 +1,10 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { cinemaService } from '@/services/cinemaService'
 
-export const useGetCinemas = () => {
+export const useGetCinemas = (city) => {
     return useQuery({
-        queryKey: ['cinemas'],
-        queryFn: cinemaService.getCinemas,
+        queryKey: ['cinemas', city],
+        queryFn: () => cinemaService.getCinemas(city),
     })
 }
 

@@ -6,6 +6,7 @@ import { ChevronRight, Play, X } from "lucide-react"
 import MovieCard from "@/components/dashboard/MovieCard"
 import { useState } from "react"
 import { useNowPlaying, useComingSoon } from "@/hooks/useMovie"
+import LoadingSpinner from "@/components/LoadingSpinner"
 
 export default function Dashboard() {
     const { data: nowPlayingData, isLoading: isLoadingNowPlaying } = useNowPlaying()
@@ -13,7 +14,11 @@ export default function Dashboard() {
     const [showTrailer, setShowTrailer] = useState(false)
 
     if (isLoadingNowPlaying) {
-        return <div>Loading...</div>
+        return (
+            <div className="h-screen flex items-center justify-center">
+                <LoadingSpinner />
+            </div>
+        )
     }
 
     const movies = nowPlayingData?.body || []

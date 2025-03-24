@@ -23,17 +23,14 @@ export default function SelectRoomType({ selected, setSelected}) {
                 </ListboxButton>
 
                 <ListboxOptions
-                    style={{
-                        overflow: "hidden",
-                    }}
                     transition
-                    className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-card py-1 text-base ring-1 ring-gray-700 shadow-lg focus:outline-none sm:text-sm"
+                    className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-card py-1 text-base ring-1 ring-gray-700 shadow-lg focus:outline-none sm:text-sm no-scrollbar"
                 >
                     {roomTypes.map((roomType) => (
                         <ListboxOption
                             key={roomType.id}
                             value={roomType}
-                            className="group relative cursor-pointer py-2 px-3 text-white hover:bg-gray-700 select-none"
+                            className="group relative cursor-pointer py-2 px-3 text-white hover:bg-gray-700 select-none flex items-center"
                         >
                             <div className="flex items-center">
                               <span className="block truncate font-normal group-data-selected:font-semibold">{roomType.name}</span>

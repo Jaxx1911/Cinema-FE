@@ -43,3 +43,11 @@ export const useMovieTrailer = (movieId) => {
         enabled: !!movieId, // Chỉ gọi API nếu movieId có giá trị
     })
 }
+
+export const useMovieInRangeDate = () => {
+    return useQuery({
+        queryKey: ["movieInRangeDate"],
+        queryFn: movieService.getMovieInRangeDate,
+    })
+}
+

@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation"
 import { Home, Search, Ticket, User, Film, Calendar, Heart, Settings, LogOut } from "lucide-react"
 import Image from "next/image"
 import { useAuth } from "@/hooks/useAuth"
-
+import { useUserInfo } from "@/hooks/useUser"
 export default function Sidebar() {
     const pathname = usePathname()
     const { logout } = useAuth()
+    const { data: userInfo } = useUserInfo()
     const isActive = (path) => {
         return pathname.includes(path)
     }
@@ -25,14 +26,14 @@ export default function Sidebar() {
 
                 <div className="flex items-center gap-3 mb-8 p-3 bg-input rounded-lg">
                     <Image
-                        src="/test1.jpg?height=40&width=40"
+                        src={userInfo?.body?.avatar_url}
                         alt="Profile"
                         width={40}
                         height={40}
                         className="rounded-full"
                     />
                     <div>
-                        <p className="font-medium">Angelina</p>
+                        <p className="font-medium">{userInfo?.body?.name}</p>
                         <p className="text-xs text-muted-foreground">Premium Member</p>
                     </div>
                 </div>

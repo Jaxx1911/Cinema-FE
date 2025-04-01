@@ -204,13 +204,14 @@ export default function MovieDetailPage() {
             <div className="grid grid-cols-6 md:grid-cols-6 lg:grid-cols-7 gap-4 mb-8">
               {showtimes?.body?.filter((showtime) => showtime.room.type === roomType.name).length > 0 ? (
                 showtimes?.body?.filter((showtime) => showtime.room.type === roomType.name).map((showtime) => (
-                  <button
+                  <Link
                     key={showtime.id}
+                    href={`/select-seat?s=${showtime.id}&m=${params.id}`}
                     className={`p-4 rounded-lg text-center bg-card transition-colors cursor-pointer showtime-card`}
                   >
                     <p className="font-medium">{format(parseISO(showtime.start_time), 'HH:mm')}</p>
                     <p className="text-sm text-gray-400">{showtime.room.name}</p>
-                  </button>
+                  </Link>
                 ))) : (
                   <p className="text-gray-400">No showtimes available</p>
                 )}

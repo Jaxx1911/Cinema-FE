@@ -6,10 +6,23 @@ import { Home, Search, Ticket, User, Film, Calendar, Heart, Settings, LogOut } f
 import Image from "next/image"
 import { useAuth } from "@/hooks/useAuth"
 import { useUserInfo } from "@/hooks/useUser"
+import { useRouter } from "next/navigation"
+import { tokenStorage } from "@/utils/tokenStorage"
+
 export default function Sidebar() {
+    const router = useRouter()
+
     const pathname = usePathname()
     const { logout } = useAuth()
-    const { data: userInfo } = useUserInfo()
+    const { data: userInfo, isError: isErrorUserInfo } = useUserInfo()
+
+    if (isErrorUserInfo) {
+        console.log(isErrorUserInfo)
+        localStorage.clear()
+        router.push("/")
+        window.location.reload()
+    }
+
     const isActive = (path) => {
         return pathname.includes(path)
     }
@@ -26,7 +39,7 @@ export default function Sidebar() {
 
                 <div className="flex items-center gap-3 mb-8 p-3 bg-input rounded-lg">
                     <Image
-                        src={userInfo?.body?.avatar_url}
+                        src={userInfo?.body?.avatar_url || "/test1.jpg?height=40&width=40"}
                         alt="Profile"
                         width={40}
                         height={40}

@@ -7,12 +7,13 @@ const userApi = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${tokenStorage.getToken()}`,
+        'Authorization': `Bearer ${tokenStorage.getAccessToken()}`,
     },
 })
 
 export const userService = {
     getListUser: async () => {
+        console.log(userApi.defaults.headers.Authorization)
         const response = await userApi.get('/user')
         return response.data
     },

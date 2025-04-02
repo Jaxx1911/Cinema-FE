@@ -7,7 +7,6 @@ import MovieCard from "@/components/dashboard/MovieCard"
 import { useState } from "react"
 import { useNowPlaying, useComingSoon } from "@/hooks/useMovie"
 import LoadingSpinner from "@/components/LoadingSpinner"
-
 export default function Dashboard() {
     const { data: nowPlayingData, isLoading: isLoadingNowPlaying } = useNowPlaying()
     const { data: comingSoonData } = useComingSoon()

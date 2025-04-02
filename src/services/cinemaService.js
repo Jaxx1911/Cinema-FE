@@ -18,4 +18,8 @@ export const cinemaService = {
         const response = await cinemaApi.get(`/cinema/${id}`)
         return response.data
     },
+    getCinemasWithFacilities: async (city) => {
+        const response = await cinemaApi.get(`/cinema/facilities?city=${city}`)
+        return response.data
+    },
 }

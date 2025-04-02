@@ -14,3 +14,11 @@ export const useGetCinemaById = (id) => {
         queryFn: () => cinemaService.getCinemaById(id),
     })
 }
+
+export const useGetCinemasWithFacilities = (city) => {
+    return useQuery({
+        queryKey: ['cinemas-rooms', city],
+        queryFn: () => cinemaService.getCinemasWithFacilities(city),
+    })
+}
+

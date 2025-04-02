@@ -17,25 +17,25 @@ export default function Movies() {
     const comingSoon = comingSoonData?.body || []
 
     return (
-        <div className="p-8">
+        <div className="p-8 ">
             <div className="flex space-x-4 mb-8">
                 <div className="flex space-x-4">
                     <button
                         onClick={() => setActiveTab('nowPlaying')}
-                        className={`px-4 py-2 rounded-lg ${
+                        className={`px-4 py-2 rounded-lg cursor-pointer ${
                             activeTab === 'nowPlaying'
-                                ? 'bg-primary text-white'
-                                : 'bg-secondary text-gray-200 border border-gray-900'
+                                ? 'bg-primary text-black'
+                                : 'bg-secondary text-white border border-gray-900'
                         }`}
                     >
                         Now Playing
                     </button>
                     <button
                         onClick={() => setActiveTab('comingSoon')}
-                        className={`px-4 py-2 rounded-lg ${
+                        className={`px-4 py-2 rounded-lg cursor-pointer ${
                             activeTab === 'comingSoon'
-                                ? 'bg-primary text-white'
-                                : 'bg-secondary text-gray-200 border border-gray-900'
+                                ? 'bg-primary text-black'
+                                : 'bg-secondary text-white border border-gray-900'
                         }`}
                     >
                         Coming Soon

@@ -4,7 +4,10 @@ export const tokenStorage = {
     localStorage.setItem('refresh_token', refresh_token)
   },
 
-  getAccessToken: () => localStorage.getItem('access_token'),
+  getAccessToken: () => {
+    console.log("aaaaa" + localStorage.getItem('access_token'))
+    return localStorage.getItem('access_token')
+  },
   
   getRefreshToken: () => localStorage.getItem('refresh_token'),
 

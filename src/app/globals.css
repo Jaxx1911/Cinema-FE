@@ -149,6 +149,22 @@ body {
   margin-bottom: 3rem;
 }
 
+.-mt-64 {
+  margin-top: -16rem;
+}
+
+.-mt-56 {
+  margin-top: -14rem;
+}
+
+.-mt-48 {
+  margin-top: -12rem;
+}
+
+.-mt-40 {
+  margin-top: -10rem;
+}
+
 .-mt-32 {
   margin-top: -8rem;
 }
@@ -175,6 +191,10 @@ body {
 
 .mt-2 {
   margin-top: 0.5rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
 }
 
 .mt-4 {
@@ -430,6 +450,34 @@ body {
   color: white;
 }
 
+.text-gray-400 {
+  color: #d1d5db;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+.text-gray-600 {
+  color: #4b5563;
+}
+
+.text-gray-700 {
+  color: #374151;
+}
+
+.text-gray-800 {
+  color: #1f2937;
+}
+
+.text-gray-900 {
+  color: #111827;
+}
+
+.text-black {
+  color: #000000;
+}
+
 /* Components */
 .primary-button {
   background-color: var(--primary);
@@ -575,6 +623,18 @@ body {
   border-color: var(--primary);
 }
 
+.border-gray-100 {
+  border-color: #f3f4f6;
+}
+
+.border-gray-200 {
+  border-color: #e5e7eb;
+}
+
+.border-gray-300 {
+  border-color: #d1d5db;
+}
+
 .border-gray-400 {
   border-color: #d1d5db;
 }
@@ -641,6 +701,15 @@ body {
 
 .name-card:hover {
   transform: translateY(-5px);
+}
+
+.showtime-card {
+  transition: all 0.3s ease;
+}
+
+.showtime-card:hover {
+  transform: translateY(-1px);
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 .grid {

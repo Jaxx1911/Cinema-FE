@@ -8,7 +8,7 @@ import { useMovieDetails } from "@/hooks/useMovie"
 import { useParams } from "next/navigation"
 import { useGetShowtimeByUserFilter } from "@/hooks/useShowtime"
 import { useGetCinemas } from "@/hooks/useCinema"
-import { format, parseISO } from 'date-fns'
+import { format, parseISO, addDays, getISOWeek } from 'date-fns'
 import SelectCinema from "@/components/movie/detail/selectCinema"
 import SelectRoomType from "@/components/movie/detail/selectRoomType"
 import SelectCity from "@/components/movie/detail/selectCity"
@@ -16,15 +16,14 @@ import SelectCity from "@/components/movie/detail/selectCity"
 export default function MovieDetailPage() {
   const params = useParams()
   const [showTrailer, setShowTrailer] = useState(false)
-  const [movie] = useState({
-    showtimes: [
-      { time: "10:30 AM", theater: "Cinema 1", available: true },
-      { time: "1:15 PM", theater: "Cinema 1", available: true },
-      { time: "4:00 PM", theater: "Cinema 2", available: true },
-      { time: "7:30 PM", theater: "Cinema 3", available: true },
-      { time: "10:15 PM", theater: "Cinema 2", available: false },
-    ],
-  })
+
+  const dates = [
+    { id: 1, date: format(new Date(), 'dd-MM-yyyy'), day: format(new Date(), 'EEEE')},
+    { id: 2, date: format(addDays(new Date(), 1), 'dd-MM-yyyy'), day: format(addDays(new Date(), 1), 'EEEE')},
+    { id: 3, date: format(addDays(new Date(), 2), 'dd-MM-yyyy'), day: format(addDays(new Date(), 2), 'EEEE')},
+    { id: 4, date: format(addDays(new Date(), 3), 'dd-MM-yyyy'), day: format(addDays(new Date(), 3), 'EEEE')},
+    { id: 5, date: format(addDays(new Date(), 4), 'dd-MM-yyyy'), day: format(addDays(new Date(), 4), 'EEEE')},
+  ]
 
   const { data: movieDetails, isLoading } = useMovieDetails(params.id)
 
@@ -33,7 +32,9 @@ export default function MovieDetailPage() {
 
   const [selectedCinema, setSelectedCinema] = useState(null)
   const [roomType, setRoomType] = useState({ id: 1, name: "2D" })
-  const { data: showtimes, isLoading: isShowtimesLoading, refetch: refetchShowtimes } = useGetShowtimeByUserFilter(selectedCinema?.id, params.id, format(new Date(), 'dd-MM-yyyy'))
+
+  const [selectedDate, setSelectedDate] = useState(dates[0])
+  const { data: showtimes, isLoading: isShowtimesLoading, refetch: refetchShowtimes } = useGetShowtimeByUserFilter(selectedCinema?.id, params.id, selectedDate.date)
 
   useEffect(() => {
     if (selectedCity?.value) {
@@ -51,7 +52,7 @@ export default function MovieDetailPage() {
 
   useEffect(() => {
     refetchShowtimes()
-  }, [selectedCinema])
+  }, [selectedCinema, selectedDate])
 
   const movies = movieDetails?.body || {}
 
@@ -102,7 +103,7 @@ export default function MovieDetailPage() {
           <div className="max-w-8xl mx-auto px-8 -mt-32 relative z-10">
             <div className="flex flex-col lg:flex-row gap-8">
               {/* Poster */}
-              <div className="lg:w-1/4">
+              <div className="lg:w-1/4 items-center justify-center flex flex-col gap-2">
                 <Image
                   src={movies.poster_url || "https://placehold.co/300x450/jpg"}
                   alt={movies.title || "placeholder"}
@@ -110,7 +111,7 @@ export default function MovieDetailPage() {
                   height={450}
                   className="rounded-xl shadow-lg"
                 />
-                <Link href={`/select-seat/${movies.id}`} className="primary-button max-w-md mx-auto block text-center" style={{width: 300}}>
+                <Link href={`/select-seat/${movies.id}`} className="primary-button max-w-md mx-auto block text-center">
                     Book tickets
                 </Link>
               </div>
@@ -139,14 +140,22 @@ export default function MovieDetailPage() {
                 </div>
 
                 {/* Directors */}
-                <div className="mt-8">
-                  <h2 className="text-xl font-semibold mb-2">Directors</h2>
-                  <div className="flex gap-6">
-                    {movies?.director?.split(',').map((name, index) => (
-                      <div key={index} className="flex items-center gap-3 name-card hover:underline transition-all duration-300 text-gray-300">
-                        <p>{name}</p>
-                      </div>
-                    ))}
+                <div className="mt-8 grid grid-cols-2 gap-4">
+                  <div>
+                    <h2 className="text-xl font-semibold mb-2">Directors</h2>
+                      <div className="flex gap-6">
+                      {movies?.director?.split(',').map((name, index) => (
+                        <div key={index} className="flex items-center gap-3 name-card hover:underline transition-all duration-300 text-gray-300">
+                          <p>{name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold mb-2">Release Date</h2>
+                    <div className="flex items-center gap-3 name-card hover:underline transition-all duration-300 text-gray-300">
+                      <p>{movies.release_date}</p>
+                    </div>
                   </div>
                 </div>
 
@@ -164,33 +173,51 @@ export default function MovieDetailPage() {
               </div>
             </div>
           </div>
+          <div className="max-w-8xl mx-auto flex gap-4 mt-8 relative z-10 px-8">
+            {dates.map((date) => (
+              <button
+                key={date.date}
+                className={`flex flex-col items-center justify-center min-w-[110px] p-4 rounded-lg cursor-pointer ${
+                  date.id === selectedDate.id ? "bg-primary text-black" : "bg-card"
+                }`}
+                onClick={() => {
+                  setSelectedDate(date)
+                }}
+              >
+                <span className="text-sm">{date.day}</span>
+                <span className="text-xl font-bold">{date.date.split("-")[0]}</span>
+              </button>
+            ))}
+          </div>          
+          
           {/* Showtimes */}
-          <div className="max-w-8xl mx-auto px-8 mt-16 relative z-10">
+          <div className="max-w-8xl mx-auto px-8 mt-8 relative z-10">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Showtimes</h2>
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
                   <SelectRoomType selected={roomType} setSelected={setRoomType} />
                   <SelectCinema selected={selectedCinema} setSelected={setSelectedCinema} cinemas={cinemas} />
                   <SelectCity selected={selectedCity} setSelected={setSelectedCity}/>
-                </div>
+              </div>
             </div>      
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+            <div className="grid grid-cols-6 md:grid-cols-6 lg:grid-cols-7 gap-4 mb-8">
               {showtimes?.body?.filter((showtime) => showtime.room.type === roomType.name).length > 0 ? (
                 showtimes?.body?.filter((showtime) => showtime.room.type === roomType.name).map((showtime) => (
-                  <button
+                  <Link
                     key={showtime.id}
-                    className={`p-4 rounded-lg text-center bg-gray-800 hover:bg-gray-700 transition-colors`}
+                    href={`/select-seat?s=${showtime.id}&m=${params.id}`}
+                    className={`p-4 rounded-lg text-center bg-card transition-colors cursor-pointer showtime-card`}
                   >
                     <p className="font-medium">{format(parseISO(showtime.start_time), 'HH:mm')}</p>
                     <p className="text-sm text-gray-400">{showtime.room.name}</p>
-                  </button>
+                  </Link>
                 ))) : (
                   <p className="text-gray-400">No showtimes available</p>
                 )}
               </div>
-            </div>
-            <div className="flex justify-between items-center mb-4" style={{height: 200}}></div>
+          </div>
+          <div className="flex justify-between items-center mb-4" style={{height: 200}}></div>
 
           {/* Trailer Modal */}
           {showTrailer && (

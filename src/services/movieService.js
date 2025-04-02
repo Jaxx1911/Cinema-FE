@@ -31,4 +31,8 @@ export const movieService = {
         const response = await movieApi.get(`/movies/${movieId}/trailer`)
         return response.data
     },
+    getMovieInRangeDate: async () => {
+        const response = await movieApi.get(`/movie/range`)
+        return response.data
+    },
 }

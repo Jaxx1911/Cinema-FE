@@ -8,3 +8,11 @@ export const useGetShowtimeByUserFilter = (cinemaId, movieId, day) => {
         enabled: !!cinemaId && !!movieId && !!day,
     })
 }
+
+export const useGetShowtimeById = (showtimeId) => {
+    return useQuery({
+        queryKey: ['showtime', showtimeId],
+        queryFn: () => showtimeService.getShowtimeById(showtimeId),
+        enabled: !!showtimeId,
+    })
+}

@@ -2,75 +2,74 @@
 
 import React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ChevronLeft } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { format, addDays } from "date-fns"
 import { useMovieDetails } from "@/hooks/useMovie"
+import { useGetShowtimeById, useGetShowtimeByUserFilter } from "@/hooks/useShowtime"
+import { useGetSeatsByRoomId } from "@/hooks/useSeat"
+import { parseISO } from 'date-fns'
+
 export default function SelectSeat() {
   const params = useSearchParams()
   const [selectedSeats, setSelectedSeats] = useState([])
   const [selectedTime, setSelectedTime] = useState("19:30")
+  const [tickets, setTickets] = useState({})
   
   const showtimeId = params.get("s")
   const movieId = params.get("m")
-  console.log(showtimeId, movieId);
   
   const { data: movieDetails } = useMovieDetails(movieId)
+  const { data: showtimeDetails } = useGetShowtimeById(showtimeId)
+  const { data: listSeats } = useGetSeatsByRoomId(showtimeDetails?.body?.room?.id)
 
+  const seatMap = listSeats?.body?.reduce((acc, seat) => {
+    acc[seat.row_number + seat.seat_number] = seat
+    return acc
+  }, {})
 
-  const dates = [
-    { id: 1, date: format(new Date(), 'dd-MM-yyyy'), day: format(new Date(), 'EEEE')},
-    { id: 2, date: format(addDays(new Date(), 1), 'dd-MM-yyyy'), day: format(addDays(new Date(), 1), 'EEEE')},
-    { id: 3, date: format(addDays(new Date(), 2), 'dd-MM-yyyy'), day: format(addDays(new Date(), 2), 'EEEE')},
-    { id: 4, date: format(addDays(new Date(), 3), 'dd-MM-yyyy'), day: format(addDays(new Date(), 3), 'EEEE')},
-    { id: 5, date: format(addDays(new Date(), 4), 'dd-MM-yyyy'), day: format(addDays(new Date(), 4), 'EEEE')},
-  ]
+  const initialTickets = showtimeDetails?.body?.tickets?.reduce((acc, ticket) => {
+    acc[ticket.seat_id] = ticket
+    return acc
+  }, {})
 
-  const [selectedDate, setSelectedDate] = useState(dates[0].date)
-  // Sample movie data
-  const movie = {
-    id: params.id,
-    title: "Avengers: Infinity War",
-    poster: "/placeholder.svg?height=150&width=100",
-    genres: ["Action", "Adventure", "Sci-Fi"],
-    price: 70000, // Price per seat in VND
-    dates: dates,
-    times: ["10:30", "13:15", "16:00", "19:30", "22:15"],
-  }
+  useEffect(() => {
+    if (showtimeDetails?.body?.tickets) {
+      setTickets(initialTickets)
+    }
+  }, [showtimeDetails])
 
   const toggleSeat = (seatId) => {
+    const seat = seatMap?.[seatId]
+    if (!seat) return
+
+    setTickets(prev => ({
+      ...prev,
+      [seat.id]: {
+        ...prev[seat.id],
+        status: prev[seat.id]?.status === 'selected' ? 'available' : 'selected'
+      }
+    }))
+
     if (selectedSeats.includes(seatId)) {
       setSelectedSeats(selectedSeats.filter((id) => id !== seatId))
     } else {
       setSelectedSeats([...selectedSeats, seatId])
     }
   }
+  
+  console.log(tickets)
 
-  const getSeatStatus = (row, col) => {
-    const seatId = `${row}${col}`
-
-    if (selectedSeats.includes(seatId)) {
-      return "selected"
-    }
-
-    // Some seats are pre-reserved
-    const reservedSeats = ["C4", "C5", "D6", "D7", "E2", "E3", "F10", "G8", "H5", "H6", "H7"]
-    if (reservedSeats.includes(seatId)) {
-      return "reserved"
-    }
-
-    return "available"
-  }
-
-  const totalPrice = selectedSeats.length * movie.price
+  const totalPrice = selectedSeats.length * showtimeDetails?.body?.price
 
   return (
     <div className="max-w-7xl mx-auto p-8">
+      <Image src={movieDetails?.body?.large_poster_url} alt="background" width={1920} height={1080} className="absolute top-0 left-0 w-full h-full object-cover z-[-1] opacity-50" />
       <div className="flex items-center gap-4 mb-8">
-        <Link href={`/movie/${movie.id}`}>
+        <Link href={`/movie/${movieId}`}>
           <ChevronLeft className="w-6 h-6" />
         </Link>
         <h1 className="text-2xl font-bold">Select seats</h1>
@@ -78,73 +77,31 @@ export default function SelectSeat() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <div className="bg-card rounded-xl p-6 mb-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold">Select date</h2>
-              <span className="text-muted-foreground">April 2023</span>
-            </div>
-
-            <div className="flex gap-4 overflow-x-auto pb-4">
-              {movie.dates.map((date) => (
-                <button
-                  key={date.date}
-                  className={`flex flex-col items-center justify-center min-w-[80px] p-4 rounded-lg ${
-                    selectedDate === date.date ? "bg-primary text-black" : "bg-input hover:bg-input/80"
-                  }`}
-                  onClick={() => setSelectedDate(date.date)}
-                >
-                  <span className="text-sm">{date.day}</span>
-                  <span className="text-xl font-bold">{date.date.split("-")[0]}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-card rounded-xl p-6 mb-8">
-            <h2 className="text-lg font-bold mb-6">Select time</h2>
-
-            <div className="flex flex-wrap gap-4">
-              {movie.times.map((time) => (
-                <button
-                  key={time}
-                  className={`px-6 py-3 rounded-lg ${
-                    selectedTime === time ? "bg-primary text-black" : "bg-input hover:bg-input/80"
-                  }`}
-                  onClick={() => setSelectedTime(time)}
-                >
-                  {time}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div className="bg-card rounded-xl p-6">
-            <h2 className="text-lg font-bold mb-6">Select seats</h2>
-
-            <div className="w-full bg-[#111] rounded-lg p-6 mb-6">
-              <div className="w-full h-2 bg-[#333] rounded-full mb-12 relative">
-                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-xs text-muted-foreground">
+            <div className="w-full bg-[#111] rounded-lg p-6">
+              <div className="w-full h-4 bg-[#333] rounded-full mb-12">
+                <div className="-bottom-6 text-xs text-white flex items-center justify-center">
                   SCREEN
                 </div>
               </div>
 
               <div className="grid grid-cols-10 gap-2 mb-8">
-                {["A", "B", "C", "D", "E", "F", "G", "H"].map((row, rowIndex) => (
+                {Array.from({ length: showtimeDetails?.body?.room?.row_count }, (_, i) => String.fromCharCode(65 + i)).map((row, rowIndex) => (
                   <React.Fragment key={row}>
-                    {Array.from({ length: 10 }, (_, i) => i + 1).map((col) => {
-                      const status = getSeatStatus(row, col)
+                    {Array.from({ length: showtimeDetails?.body?.room?.column_count }, (_, i) => i + 1).map((col) => {
+                      const seat = seatMap?.[`${row}${col}`]
                       return (
                         <button
                           key={`${row}${col}`}
                           className={`w-10 h-10 rounded-md text-xs flex items-center justify-center ${
-                            status === "available"
+                            tickets[seat?.id]?.status === "available" || !tickets[seat?.id]
                               ? "border border-[#333] hover:bg-[#222]"
-                              : status === "selected"
+                              : tickets[seat?.id]?.status === "selected"
                                 ? "bg-primary text-black"
                                 : "bg-[#333] opacity-50 cursor-not-allowed"
                           }`}
-                          onClick={() => status !== "reserved" && toggleSeat(`${row}${col}`)}
-                          disabled={status === "reserved"}
+                          onClick={() => tickets[seat?.id]?.status !== "reserved" && toggleSeat(`${row}${col}`)}
+                          disabled={tickets[seat?.id]?.status === "reserved"}
                         >
                           {row}
                           {col}
@@ -177,7 +134,7 @@ export default function SelectSeat() {
           <div className="bg-card rounded-xl p-6 sticky top-8">
             <h2 className="text-lg font-bold mb-6">Booking summary</h2>
 
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-4 mb-4">
               <Image
                 src={movieDetails?.body?.poster_url || "/placeholder.svg"}
                 alt={movieDetails?.body?.title || ""}
@@ -189,22 +146,22 @@ export default function SelectSeat() {
                 <h3 className="font-bold mb-1">{movieDetails?.body?.title}</h3>
                 <p className="text-sm text-muted-foreground mb-2">{movieDetails?.body?.genres.join(", ")}</p>
                 <div className="text-sm">
-                  <p>Date: {selectedDate.split("-").join("/")}</p>
-                  <p>Time: {selectedTime}</p>
+                  <p>Date: {showtimeDetails?.body ? format(parseISO(showtimeDetails?.body?.start_time), 'dd-MM-yyyy') : ""}</p>
+                  <p>Time: {showtimeDetails?.body ? format(parseISO(showtimeDetails?.body?.start_time), 'HH:mm') : ""}</p>
                 </div>
               </div>
             </div>
 
             <div className="border-t border-border pt-4 mb-6">
-              <div className="flex justify-between mb-2">
+              <div className="flex justify-between mb-2 mt-4">
                 <span className="text-muted-foreground">Tickets ({selectedSeats.length})</span>
-                <span>{(movie.price * selectedSeats.length).toLocaleString()} VND</span>
+                <span>{(showtimeDetails?.body?.price * selectedSeats.length).toLocaleString()} VND</span>
               </div>
 
               {selectedSeats.length > 0 && (
                 <div className="flex justify-between mb-2">
                   <span className="text-muted-foreground">Seats</span>
-                  <span>{selectedSeats.sort().join(", ")}</span>
+                  <span>{selectedSeats.sort((a, b) => a.localeCompare(b)).join(", ")}</span>
                 </div>
               )}
 
@@ -215,18 +172,18 @@ export default function SelectSeat() {
             </div>
 
             <div className="border-t border-border pt-4 mb-6">
-              <div className="flex justify-between font-bold">
+              <div className="flex justify-between font-bold mt-4">
                 <span>Total</span>
                 <span>{totalPrice.toLocaleString()} VND</span>
               </div>
             </div>
 
             <Link
-              href={selectedSeats.length > 0 ? `/payment/${movie.id}` : "#"}
+              href={selectedSeats.length > 0 ? `/payment/${movieId}` : "#"}
               className={`primary-button block text-center ${selectedSeats.length === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
               onClick={(e) => selectedSeats.length === 0 && e.preventDefault()}
             >
-              Continue to payment
+              Continue
             </Link>
           </div>
         </div>

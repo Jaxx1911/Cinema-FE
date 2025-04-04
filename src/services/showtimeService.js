@@ -14,4 +14,8 @@ export const showtimeService = {
         const response = await showtimeApi.get(`/showtime?cinema_id=${cinemaId}&movie_id=${movieId}&day=${day}`)
         return response.data
     },   
+    getShowtimeById: async (showtimeId) => {
+        const response = await showtimeApi.get(`/showtime/${showtimeId}`)
+        return response.data
+    }
 }

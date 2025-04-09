@@ -30,10 +30,13 @@ export default function MovieDetailPage() {
   const [selectedCity, setSelectedCity] = useState({ id: 1, name: "Hà Nội", value: "hanoi" })
   const { data: cinemas, isLoading: isCinemasLoading, refetch: refetchCinemas } = useGetCinemas(selectedCity?.value)
 
-  const [selectedCinema, setSelectedCinema] = useState(null)
+  const [selectedCinema, setSelectedCinema] = useState()
+  
+  
   const [roomType, setRoomType] = useState({ id: 1, name: "2D" })
 
   const [selectedDate, setSelectedDate] = useState(dates[0])
+
   const { data: showtimes, isLoading: isShowtimesLoading, refetch: refetchShowtimes } = useGetShowtimeByUserFilter(selectedCinema?.id, params.id, selectedDate.date)
 
   useEffect(() => {
@@ -51,7 +54,9 @@ export default function MovieDetailPage() {
   }, [cinemas])
 
   useEffect(() => {
-    refetchShowtimes()
+    if(!!selectedCinema?.id && !!params.id && !!selectedDate.date) {
+      refetchShowtimes()
+    }
   }, [selectedCinema, selectedDate])
 
   const movies = movieDetails?.body || {}

@@ -5,7 +5,7 @@ import Image from "next/image"
 import LoginForm from "@/components/auth/LoginForm"
 import SignupForm from "@/components/auth/SignupForm"
 import ForgotPassword from "@/components/auth/ForgotPassword"
-import { redirect } from "next/navigation"
+import '@/app/globals.css'
 
 export default function Home() {
   const [authMode, setAuthMode] = useState("login")

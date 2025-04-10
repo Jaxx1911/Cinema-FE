@@ -12,6 +12,7 @@ import { useGetSeatsByRoomId } from "@/hooks/useSeat"
 import SeatMatrix from "@/components/select-seat/SeatMatrix"
 import PopcornCombo from "@/components/select-seat/PopcornCombo"
 import BookingSummary from "@/components/select-seat/BookingSummary"
+import OrderConfirmation from "@/components/select-seat/OrderConfirmation"
 
 export default function SelectSeat() {
   const params = useSearchParams()
@@ -19,7 +20,10 @@ export default function SelectSeat() {
   const [selectedSeats, setSelectedSeats] = useState([])
   const [tickets, setTickets] = useState({})
   const [showComboSelection, setShowComboSelection] = useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(false)
   const [selectedCombos, setSelectedCombos] = useState([])
+  const [promoCodeApplied, setPromoCodeApplied] = useState(false)
+  const [discountAmount, setDiscountAmount] = useState(0)
   
   const showtimeId = params.get("s")
   const movieId = params.get("m")
@@ -44,22 +48,36 @@ export default function SelectSeat() {
     }
   }, [showtimeDetails])
 
-  const toggleSeat = (seatId) => {
-    const seat = seatMap?.[seatId]
-    if (!seat) return
+  const toggleSeat = (...listSeatId) => {
+    const firstSeat = seatMap?.[listSeatId[0]]
+    if (!firstSeat) return
+    const newStatus = tickets[firstSeat.id]?.status === 'selected' ? 'available' : 'selected'
 
-    setTickets(prev => ({
-      ...prev,
-      [seat.id]: {
-        ...prev[seat.id],
-        status: prev[seat.id]?.status === 'selected' ? 'available' : 'selected'
+    const newTickets = { ...tickets }
+    listSeatId.forEach(seatId => {
+      const seat = seatMap?.[seatId]
+      if (seat) {
+        newTickets[seat.id] = {
+          ...tickets[seat.id],
+          status: newStatus
+        }
       }
-    }))
+    })
+    setTickets(newTickets)
 
-    if (selectedSeats.includes(seatId)) {
-      setSelectedSeats(selectedSeats.filter((id) => id !== seatId))
+    if (selectedSeats.includes(listSeatId[0])) {
+      setSelectedSeats(selectedSeats.filter(id => !listSeatId.includes(id)))
     } else {
-      setSelectedSeats([...selectedSeats, seatId])
+      setSelectedSeats([...selectedSeats, ...listSeatId].sort(
+        (a, b) => {
+          const rowA = a.split('')[0]
+          const rowB = b.split('')[0]
+          if (rowA === rowB) {
+            return a.split('')[1] - b.split('')[1]
+          }
+          return rowA - rowB
+        }
+      ))
     }
   }
 
@@ -76,12 +94,28 @@ export default function SelectSeat() {
     })
   }
 
+  const handleApplyPromoCode = (code) => {
+    // Giả lập API call kiểm tra mã giảm giá
+    setTimeout(() => {
+      if (code === 'DISCOUNT20') {
+        setPromoCodeApplied(true)
+        setDiscountAmount(Math.floor(totalPrice * 0.2)) // Giảm 20%
+      }
+    }, 500)
+  }
+
   const handleContinueToPayment = () => {
-    router.push(`/payment?m=${movieId}&s=${showtimeId}&seats=${selectedSeats.join(',')}&combos=${JSON.stringify(selectedCombos)}`)
+    router.push(`/payment?m=${movieId}&s=${showtimeId}&seats=${selectedSeats.join(',')}&combos=${JSON.stringify(selectedCombos)}&discount=${discountAmount}`)
   }
 
   const totalPrice = selectedSeats.length * showtimeDetails?.body?.price + 
     selectedCombos.reduce((total, combo) => total + (combo.price * combo.quantity), 0)
+
+  const getStepTitle = () => {
+    if (showConfirmation) return 'Xác nhận đơn hàng'
+    if (showComboSelection) return 'Chọn combo'
+    return 'Chọn ghế'
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-8">
@@ -96,13 +130,19 @@ export default function SelectSeat() {
         <Link href={`/movies/${movieId}`}>
           <ChevronLeft className="w-6 h-6" />
         </Link>
-        <h1 className="text-2xl font-bold">{showComboSelection ? 'Select Combo' : 'Select seats'}</h1>
+        <h1 className="text-2xl font-bold">{getStepTitle()}</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {!showComboSelection ? (
+        {!showComboSelection && !showConfirmation ? (
           <>
-            <SeatMatrix showtimeDetails={showtimeDetails} tickets={tickets} toggleSeat={toggleSeat} selectedSeats={selectedSeats} seatMap={seatMap} />
+            <SeatMatrix 
+              showtimeDetails={showtimeDetails} 
+              tickets={tickets} 
+              toggleSeat={toggleSeat} 
+              selectedSeats={selectedSeats} 
+              seatMap={seatMap} 
+            />
 
             <div className="lg:col-span-1">
               <BookingSummary
@@ -110,13 +150,13 @@ export default function SelectSeat() {
                 showtimeDetails={showtimeDetails}
                 selectedSeats={selectedSeats}
                 totalPrice={totalPrice}
-                buttonText="Continue"
+                buttonText="Tiếp tục"
                 onButtonClick={() => setShowComboSelection(true)}
                 buttonDisabled={selectedSeats.length === 0}
               />
             </div>
           </>
-        ) : (
+        ) : showComboSelection && !showConfirmation ? (
           <>
             <div className="lg:col-span-2">
               <PopcornCombo onContinue={handleComboSelect} selectedCombos={selectedCombos} />
@@ -129,10 +169,27 @@ export default function SelectSeat() {
                 selectedSeats={selectedSeats}
                 selectedCombos={selectedCombos}
                 totalPrice={totalPrice}
-                buttonText="Continue to Payment"
-                onButtonClick={handleContinueToPayment}
+                buttonText="Tiếp tục"
+                onButtonClick={() => setShowConfirmation(true)}
                 showBackButton={true}
                 onBackClick={() => setShowComboSelection(false)}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="lg:col-span-3">
+              <OrderConfirmation
+                movieDetails={movieDetails}
+                showtimeDetails={showtimeDetails}
+                selectedSeats={selectedSeats}
+                selectedCombos={selectedCombos}
+                totalPrice={totalPrice}
+                onApplyPromoCode={handleApplyPromoCode}
+                onBack={() => setShowConfirmation(false)}
+                onConfirm={handleContinueToPayment}
+                promoCodeApplied={promoCodeApplied}
+                discountAmount={discountAmount}
               />
             </div>
           </>

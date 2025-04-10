@@ -1,5 +1,3 @@
-
-
 export const tokenStorage = {
   setTokens: (access_token, refresh_token) => {
     localStorage.setItem('access_token', access_token)
@@ -7,8 +5,15 @@ export const tokenStorage = {
   },
 
   getAccessToken: () => {
-    console.log(localStorage.getItem('access_token'));
-    return localStorage.getItem('access_token')
+    if (typeof window !== 'undefined') {
+      // This will only run in the client-side (browser)
+      console.log(localStorage.getItem('access_token'));
+      return localStorage.getItem('access_token');
+    } else {
+      // Return a fallback or handle server-side logic
+      console.log('localStorage is not available on the server');
+      return null;
+    }
   },
   
   getRefreshToken: () => localStorage.getItem('refresh_token'),

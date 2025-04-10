@@ -15,7 +15,7 @@ export default function Sidebar() {
     const pathname = usePathname()
     const { logout } = useAuth()
     const { data: userInfo, isError: isErrorUserInfo } = useUserInfo()
-
+    
     if (isErrorUserInfo) {
         console.log(isErrorUserInfo)
         localStorage.clear()

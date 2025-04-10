@@ -1,185 +1,282 @@
-import Image from "next/image"
-import { Calendar, Clock, MapPin, Download, QrCode } from "lucide-react"
+"use client"
 
-export default function TicketsPage() {
-  // Sample tickets data
-  const tickets = [
+import { useState } from "react"
+import Image from "next/image"
+
+
+// Sample ticket data
+const ticketData = {
+  upcoming: [
     {
-      id: "1",
-      movie: {
-        title: "Avengers: Infinity War",
-        poster: "/poster.jpg?height=150&width=100",
-        genres: ["Action", "Adventure", "Sci-Fi"],
-      },
+      id: "T12345",
+      movieTitle: "Avengers: Infinity War",
+      poster: "/test1.jpg?height=450&width=300",
+      genres: ["Action", "Adventure", "Sci-Fi"],
       date: "23/04/2023",
       time: "19:30",
+      cinema: "Cinema Section A",
       seats: ["D4", "D5"],
       theater: "Vincom Ocean Park CGV",
-      section: "Section A",
-      status: "upcoming",
+      status: "Upcoming",
     },
+  ],
+  completed: [
     {
-      id: "2",
-      movie: {
-        title: "Black Panther",
-        poster: "/poster.jpg?height=150&width=100",
-        genres: ["Action", "Adventure"],
-      },
+      id: "T12289",
+      movieTitle: "Black Panther",
+      poster: "/test1.jpg?height=450&width=300",
+      genres: ["Action", "Adventure", "Sci-Fi"],
       date: "15/04/2023",
       time: "20:00",
+      cinema: "Cinema Section B",
       seats: ["F7", "F8"],
       theater: "Vincom Ocean Park CGV",
-      section: "Section B",
-      status: "completed",
+      status: "Completed",
     },
     {
-      id: "3",
-      movie: {
-        title: "Doctor Strange",
-        poster: "/poster.jpg?height=150&width=100",
-        genres: ["Action", "Fantasy"],
-      },
+      id: "T11987",
+      movieTitle: "Doctor Strange",
+      poster: "/test1.jpg?height=450&width=300",
+      genres: ["Action", "Adventure", "Fantasy"],
       date: "05/04/2023",
       time: "18:15",
+      cinema: "Cinema Section C",
       seats: ["C10", "C11"],
       theater: "Vincom Ocean Park CGV",
-      section: "Section A",
-      status: "completed",
+      status: "Completed",
     },
-  ]
+  ],
+}
+
+export default function TicketsPage() {
+  const [activeTab, setActiveTab] = useState("upcoming")
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-8">My Tickets</h1>
+    <div className="min-h-screen bg-black text-white">
+      <div className="container mx-auto p-6">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-6">My Tickets</h1>
 
-      
-
-      <div className="flex lg:flex-row gap-8">
-        <div className="space-y-6 lg:w-[40%]">
-        <div className="flex gap-4 mb-8">
-          <button className="px-6 py-2 bg-primary text-black rounded-full">Upcoming</button>
-          <button className="px-6 py-2 bg-card hover:bg-card/80 rounded-full">Completed</button>
-        </div>
-          {tickets.map((ticket) => (
-            <div
-              key={ticket.id}
-              className={`bg-card rounded-xl overflow-hidden ${
-                ticket.status === "upcoming" ? "border-l-4 border-primary" : ""
+          {/* Tabs */}
+          <div className="flex space-x-4 mb-6">
+            <button
+              onClick={() => setActiveTab("upcoming")}
+              className={`py-3 px-6 rounded-full text-sm font-medium transition-colors ${
+                activeTab === "upcoming" ? "bg-primary text-black" : "bg-card hover:bg-card/80"
               }`}
             >
-              <div className="p-6 flex flex-col md:flex-row gap-6">
-                <div className="flex gap-6">
-                  <Image
-                    src={ticket.movie.poster || "/poster.jpg"}
-                    alt={ticket.movie.title}
-                    width={100}
-                    height={150}
-                    className="rounded-lg h-[150px] w-auto"
-                  />
-                  <div>
-                    <h2 className="text-xl font-bold mb-2">{ticket.movie.title}</h2>
-                    <p className="text-muted-foreground mb-4">{ticket.movie.genres.join(", ")}</p>
+              Upcoming
+            </button>
+            <button
+              onClick={() => setActiveTab("completed")}
+              className={`py-3 px-6 rounded-full text-sm font-medium transition-colors ${
+                activeTab === "completed" ? "bg-primary text-black" : "bg-card hover:bg-card/80"
+              }`}
+            >
+              Completed
+            </button>
+          </div>
+        </div>
 
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Cinema</p>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-muted-foreground" />
-                          <p>{ticket.section}</p>
-                        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+          {/* Tickets List */}
+          <div className="lg:col-span-2">
+            <div className="space-y-6">
+              {activeTab === "upcoming" && ticketData.upcoming.length === 0 && (
+                <div className="bg-card rounded-xl p-8 text-center">
+                  <p className="text-muted-foreground">You don't have any upcoming tickets.</p>
+                </div>
+              )}
+
+              {activeTab === "completed" && ticketData.completed.length === 0 && (
+                <div className="bg-card rounded-xl p-8 text-center">
+                  <p className="text-muted-foreground">You don't have any completed tickets.</p>
+                </div>
+              )}
+
+              {activeTab === "upcoming" &&
+                ticketData.upcoming.map((ticket) => (
+                  <div key={ticket.id} className="bg-card rounded-xl overflow-hidden border-l-4 border-primary">
+                    <div className="flex flex-col md:flex-row">
+                      <div className="md:w-1/3 lg:w-1/4 relative" style={{ minHeight: "200px" }}>
+                        <Image
+                          src={ticket.poster || "/test1.svg"}
+                          alt={ticket.movieTitle}
+                          fill
+                          className="object-cover"
+                        />
                       </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Date</p>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-muted-foreground" />
-                          <p>{ticket.date}</p>
+                      <div className="p-6 flex-1">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <h2 className="text-xl font-bold">{ticket.movieTitle}</h2>
+                            <p className="text-sm text-muted-foreground">{ticket.genres.join(", ")}</p>
+                          </div>
+                          <span className="bg-primary/20 text-primary text-xs px-3 py-1 rounded-full font-medium">
+                            {ticket.status}
+                          </span>
                         </div>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Time</p>
-                        <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-muted-foreground" />
-                          <p>{ticket.time}</p>
+
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Cinema</p>
+                            <p className="text-sm">{ticket.cinema}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Date</p>
+                            <p className="text-sm">{ticket.date}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Time</p>
+                            <p className="text-sm">{ticket.time}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Seats</p>
+                            <p className="text-sm">{ticket.seats.join(", ")}</p>
+                          </div>
                         </div>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Seats</p>
-                        <p>{ticket.seats.join(", ")}</p>
+
+                        <div className="flex space-x-4">
+                          
+                          <button className="bg-card border border-border py-2 px-4 rounded-md font-medium text-sm flex items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="mr-2"
+                            >
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                              <polyline points="7 10 12 15 17 10" />
+                              <line x1="12" x2="12" y1="15" y2="3" />
+                            </svg>
+                            Download
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                ))}
 
-                <div className="md:ml-auto flex flex-col justify-between">
-                  <div className="flex flex-col items-end">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs ${
-                        ticket.status === "upcoming"
-                          ? "bg-primary/20 text-primary"
-                          : ticket.status === "completed"
-                            ? "bg-green-500/20 text-green-500"
-                            : "bg-red-500/20 text-red-500"
-                      }`}
-                    >
-                      {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
-                    </span>
-                  </div>
+              {activeTab === "completed" &&
+                ticketData.completed.map((ticket) => (
+                  <div key={ticket.id} className="bg-card rounded-xl overflow-hidden">
+                    <div className="flex flex-col md:flex-row">
+                      <div className="md:w-1/3 lg:w-1/4 relative" style={{ minHeight: "200px" }}>
+                        <Image
+                          src={ticket.poster || "/test1.svg"}
+                          alt={ticket.movieTitle}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="p-6 flex-1">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <h2 className="text-xl font-bold">{ticket.movieTitle}</h2>
+                            <p className="text-sm text-muted-foreground">{ticket.genres.join(", ")}</p>
+                          </div>
+                          <span className="bg-green-500/20 text-green-500 text-xs px-3 py-1 rounded-full font-medium">
+                            {ticket.status}
+                          </span>
+                        </div>
 
-                  <div className="flex gap-4 mt-4 md:mt-0">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-input rounded-lg text-sm">
-                      <QrCode className="w-4 h-4" />
-                      <span>View QR</span>
-                    </button>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-input rounded-lg text-sm">
-                      <Download className="w-4 h-4" />
-                      <span>Download</span>
-                    </button>
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Cinema</p>
+                            <p className="text-sm">{ticket.cinema}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Date</p>
+                            <p className="text-sm">{ticket.date}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Time</p>
+                            <p className="text-sm">{ticket.time}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Seats</p>
+                            <p className="text-sm">{ticket.seats.join(", ")}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex space-x-4">
+                          <button className="bg-card border border-border py-2 px-4 rounded-md font-medium text-sm flex items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="mr-2"
+                            >
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                              <polyline points="7 10 12 15 17 10" />
+                              <line x1="12" x2="12" y1="15" y2="3" />
+                            </svg>
+                            Download
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                ))}
+            </div>
+          </div>
+
+          {/* Ticket History Table */}
+          <div className="lg:col-span-2">
+            <div className="bg-card rounded-xl overflow-hidden">
+              <div className="p-6">
+                <h2 className="text-xl font-bold mb-4">Ticket History</h2>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-3 px-2 text-sm font-medium">Movie</th>
+                        <th className="text-left py-3 px-2 text-sm font-medium">Date</th>
+                        <th className="text-left py-3 px-2 text-sm font-medium">Time</th>
+                        <th className="text-left py-3 px-2 text-sm font-medium">Seats</th>
+                        <th className="text-left py-3 px-2 text-sm font-medium">Theater</th>
+                        <th className="text-left py-3 px-2 text-sm font-medium">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...ticketData.upcoming, ...ticketData.completed].map((ticket) => (
+                        <tr key={ticket.id} className="border-b border-border">
+                          <td className="py-3 px-2 text-sm">{ticket.movieTitle}</td>
+                          <td className="py-3 px-2 text-sm">{ticket.date}</td>
+                          <td className="py-3 px-2 text-sm">{ticket.time}</td>
+                          <td className="py-3 px-2 text-sm">{ticket.seats.join(", ")}</td>
+                          <td className="py-3 px-2 text-sm">{ticket.theater}</td>
+                          <td className="py-3 px-2 text-sm">
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs ${
+                                ticket.status === "Upcoming"
+                                  ? "bg-primary/20 text-primary"
+                                  : "bg-green-500/20 text-green-500"
+                              }`}
+                            >
+                              {ticket.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-
-        <div className="lg:w-[60%] bg-card rounded-xl p-6">
-          <h2 className="text-xl font-bold mb-4">Ticket History</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border">
-                  <th className="text-left py-3 px-4">Movie</th>
-                  <th className="text-left py-3 px-4">Date</th>
-                  <th className="text-left py-3 px-4">Time</th>
-                  <th className="text-left py-3 px-4">Seats</th>
-                  <th className="text-left py-3 px-4">Theater</th>
-                  <th className="text-left py-3 px-4">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tickets.map((ticket) => (
-                  <tr key={ticket.id} className="border-b border">
-                    <td className="py-3 px-4">{ticket.movie.title}</td>
-                    <td className="py-3 px-4">{ticket.date}</td>
-                    <td className="py-3 px-4">{ticket.time}</td>
-                    <td className="py-3 px-4">{ticket.seats.join(", ")}</td>
-                    <td className="py-3 px-4">{ticket.theater}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs ${
-                          ticket.status === "upcoming"
-                            ? "bg-primary/20 text-primary"
-                            : ticket.status === "completed"
-                              ? "bg-green-500/20 text-green-500"
-                              : "bg-red-500/20 text-red-500"
-                        }`}
-                      >
-                        {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </div>
       </div>

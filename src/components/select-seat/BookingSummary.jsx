@@ -40,7 +40,23 @@ const BookingSummary = ({
       <div className="border-t border-border pt-4 mb-6">
         <div className="flex justify-between mb-2 mt-4">
           <span className="text-muted-foreground">Tickets ({selectedSeats.length})</span>
-          <span>{(showtimeDetails?.body?.price * selectedSeats.length).toLocaleString()} VND</span>
+          <span>
+            {selectedSeats.reduce((total, seatId) => {
+              const row = seatId[0]
+              const col = parseInt(seatId.slice(1))
+              const isPremiumSeat = row >= 'D' 
+                && row < String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 2) 
+                && col >= showtimeDetails?.body?.room?.column_count/2 - 3 
+                && col <= showtimeDetails?.body?.room?.column_count/2 + 4
+              const isCoupleSeat = row === String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 1)
+              
+              let seatPrice = showtimeDetails?.body?.price
+              if (isPremiumSeat) seatPrice += 29000
+              if (isCoupleSeat) seatPrice += 19000
+              
+              return total + seatPrice
+            }, 0).toLocaleString()} VND
+          </span>
         </div>
 
         {selectedSeats.length > 0 && (

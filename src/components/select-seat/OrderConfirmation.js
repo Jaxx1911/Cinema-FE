@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { CalendarIcon, MapPinIcon, ClockIcon } from 'lucide-react';
+import { useCreateOrder } from '@/hooks/useOrder';
+import { toast } from 'react-hot-toast';
+
 const OrderConfirmation = ({ 
   movieDetails, 
   showtimeDetails, 
@@ -10,10 +13,13 @@ const OrderConfirmation = ({
   onBack,
   onConfirm,
   promoCodeApplied,
-  discountAmount = 0
+  discountAmount = 0,
+  seatMap,
+  ticketMap
 }) => {
   const [promoCode, setPromoCode] = useState('');
   const [error, setError] = useState('');
+  const { createOrder, isCreating } = useCreateOrder();
 
   const handleApplyPromoCode = () => {
     if (!promoCode.trim()) {
@@ -21,6 +27,35 @@ const OrderConfirmation = ({
       return;
     }
     onApplyPromoCode(promoCode);
+  };
+
+  const handleConfirmOrder = () => {
+    const orderData = {
+      showtime_id: showtimeDetails?.body?.id,
+      discount_id: promoCodeApplied ? promoCode : null,
+      total_price: totalPrice - discountAmount,
+      tickets: selectedSeats.map(seatId => {
+        const seat = seatMap[seatId]
+        const ticket = ticketMap[seat.id]
+        if (!ticket) {
+          return null;
+        }
+        return ticket.id
+      }).filter(Boolean),
+      combos: selectedCombos.map(combo => ({
+        id: combo.id,
+        quantity: combo.quantity,
+        total_price: combo.price * combo.quantity
+      }))
+    };
+
+    console.log('Final order data:', orderData);
+
+    createOrder(orderData, {
+      onSuccess: () => {
+        onConfirm();
+      }
+    });
   };
 
   return (
@@ -61,7 +96,6 @@ const OrderConfirmation = ({
             {selectedSeats.length} x {showtimeDetails?.body?.price?.toLocaleString()} VND
           </p>
         </div>
-        
       </div>
 
       {/* Selected Combos */}
@@ -129,7 +163,7 @@ const OrderConfirmation = ({
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3">
+      <div className="flex gap-4">
         <button
           onClick={onBack}
           className="flex-1 py-2 px-4 rounded-md border border-border hover:bg-border"
@@ -137,10 +171,13 @@ const OrderConfirmation = ({
           Quay lại
         </button>
         <button
-          onClick={onConfirm}
-          className="flex-1 py-2 px-4 rounded-md bg-primary text-black hover:bg-primary/90"
+          onClick={handleConfirmOrder}
+          disabled={isCreating}
+          className={`flex-1 py-2 px-4 rounded-md bg-primary text-black hover:bg-primary/90 cursor-pointer ${
+            isCreating ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
-          Xác nhận đặt vé
+          {isCreating ? 'Đang xử lý...' : 'Xác nhận đặt vé'}
         </button>
       </div>
     </div>

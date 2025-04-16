@@ -38,12 +38,15 @@ export default function SelectSeat() {
   }, {})
 
   const initialTickets = showtimeDetails?.body?.tickets?.reduce((acc, ticket) => {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    console.log(ticket);
     acc[ticket.seat_id] = ticket
     return acc
   }, {})
 
   useEffect(() => {
     if (showtimeDetails?.body?.tickets) {
+      console.log(initialTickets);
       setTickets(initialTickets)
     }
   }, [showtimeDetails])
@@ -105,11 +108,24 @@ export default function SelectSeat() {
   }
 
   const handleContinueToPayment = () => {
-    router.push(`/payment?m=${movieId}&s=${showtimeId}&seats=${selectedSeats.join(',')}&combos=${JSON.stringify(selectedCombos)}&discount=${discountAmount}`)
+    //router.push(`/payment?m=${movieId}&s=${showtimeId}&seats=${selectedSeats.join(',')}&combos=${JSON.stringify(selectedCombos)}&discount=${discountAmount}`)
   }
 
-  const totalPrice = selectedSeats.length * showtimeDetails?.body?.price + 
-    selectedCombos.reduce((total, combo) => total + (combo.price * combo.quantity), 0)
+  const totalPrice = selectedSeats.reduce((total, seatId) => {
+    const row = seatId[0]
+    const col = parseInt(seatId.slice(1))
+    const isPremiumSeat = row >= 'D' 
+      && row < String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 2) 
+      && col >= showtimeDetails?.body?.room?.column_count/2 - 3 
+      && col <= showtimeDetails?.body?.room?.column_count/2 + 4
+    const isCoupleSeat = row === String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 1)
+    
+    let seatPrice = showtimeDetails?.body?.price
+    if (isPremiumSeat) seatPrice += 29000
+    if (isCoupleSeat) seatPrice += 19000
+    
+    return total + seatPrice
+  }, 0) + selectedCombos.reduce((total, combo) => total + (combo.price * combo.quantity), 0)
 
   const getStepTitle = () => {
     if (showConfirmation) return 'Xác nhận đơn hàng'
@@ -190,6 +206,8 @@ export default function SelectSeat() {
                 onConfirm={handleContinueToPayment}
                 promoCodeApplied={promoCodeApplied}
                 discountAmount={discountAmount}
+                seatMap={seatMap}
+                ticketMap={initialTickets}
               />
             </div>
           </>

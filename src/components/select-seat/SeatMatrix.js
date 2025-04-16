@@ -32,6 +32,8 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
                           && col >= showtimeDetails?.body?.room?.column_count/2 - 3 
                           && col <= showtimeDetails?.body?.room?.column_count/2 + 4
                     
+                    const isCoupleSeat = row === String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 1)
+
                     return (
                       <button
                         key={`${row}${col}`}
@@ -45,11 +47,11 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
                               : "bg-[#333] opacity-50 cursor-not-allowed"
                         }`}
                         onClick={() => {
-                          if (tickets[seat?.id]?.status !== "reserved") {
+                          if (tickets[seat?.id]?.status === "available") {
                             toggleSeat(`${row}${col}`)
                           }
                         }}
-                        disabled={tickets[seat?.id]?.status === "reserved"}
+                        disabled={tickets[seat?.id]?.status !== "available"}
                       >
                         {row}
                         {col}
@@ -68,7 +70,7 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
                   const seat = seatMap?.[`${lastRow}${col}`]
                   const nextSeat = seatMap?.[`${lastRow}${col + 1}`]
                   const isSelected = tickets[seat?.id]?.status === "selected" || tickets[nextSeat?.id]?.status === "selected"
-                  const isReserved = tickets[seat?.id]?.status === "reserved" || tickets[nextSeat?.id]?.status === "reserved"
+                  const isReserved = tickets[seat?.id]?.status !== "available" || tickets[nextSeat?.id]?.status !== "available"
 
                   return (
                     <button

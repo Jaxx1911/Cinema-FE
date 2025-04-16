@@ -39,7 +39,7 @@ export default function MovieWithShowtime({ cinema, movie, selectedDate }) {
               <div className="flex gap-4 mb-4">
                 <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm">{movie?.duration}</span>
+                  <span className="text-sm">{movie?.duration + " min"}</span>
                 </div>
               </div>
             </div>
@@ -62,7 +62,7 @@ export default function MovieWithShowtime({ cinema, movie, selectedDate }) {
                 showtimes?.map((showtime, index) => (
                   <Link
                     key={index}
-                    href={`/select-seat/${movie.id}?time=${showtime.start_time}&date=${selectedDate.date}&screen=${showtime.room.name}&type=${showtime.room.type}`}
+                    href={`/select-seat?s=${showtime.id}&m=${movie.id}`}
                     className="block p-4 bg-card rounded-lg hover:bg-gray-700 transition-colors text-center border border-gray-700 showtime-card"
                   >
                     <p className="font-medium mb-1">{format(new Date(showtime.start_time), 'HH:mm')}</p>

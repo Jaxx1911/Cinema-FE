@@ -32,6 +32,7 @@ const BookingSummary = ({
           <div className="text-sm">
             <p>Date: {showtimeDetails?.body ? format(parseISO(showtimeDetails?.body?.start_time), 'dd-MM-yyyy') : ""}</p>
             <p>Time: {showtimeDetails?.body ? format(parseISO(showtimeDetails?.body?.start_time), 'HH:mm') : ""}</p>
+            <p>Price: {showtimeDetails?.body?.price.toLocaleString()} VND</p>
           </div>
         </div>
       </div>

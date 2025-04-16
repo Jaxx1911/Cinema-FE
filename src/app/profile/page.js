@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-
+import { useUserInfo } from "@/hooks/useUser"
 // Sample user data
 const userData = {
   name: "Angelina",
@@ -91,42 +91,19 @@ const paymentHistory = [
 ]
 
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState("profile")
+  const [activeTab, setActiveTab] = useState("change-info")
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showAvatarTooltip, setShowAvatarTooltip] = useState(false)
   const router = useRouter()
+  const {data: user} = useUserInfo()
+
+  // User profile state
   const [userProfile, setUserProfile] = useState({
-    name: userData.name,
-    email: userData.email,
-    phone: userData.phone || "",
-    avatar: userData.avatar,
+    name: user?.body?.name,
+    email: user?.body?.email,
+    phone: user?.body?.phone || "",
+    avatar: user?.body?.avatar,
   })
-
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  })
-
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target
-    setPasswordData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault()
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("New passwords don't match!")
-      return
-    }
-    alert("Password updated successfully!")
-    setPasswordData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    })
-  }
 
   // Handle profile form changes
   const handleProfileChange = (e) => {
@@ -154,6 +131,7 @@ export default function ProfilePage() {
   // Handle form submission
   const handleProfileSubmit = (e) => {
     e.preventDefault()
+    // In a real app, you would send this data to your backend
     alert("Profile updated successfully!")
     // Update the userData object to reflect changes in the sidebar
     userData.name = userProfile.name
@@ -174,22 +152,25 @@ export default function ProfilePage() {
               <div className="flex flex-col items-center text-center">
                 <div className="w-24 h-24 rounded-full overflow-hidden bg-input border-2 border-primary mb-4">
                   <Image
-                    src={userData.avatar || "/test1.jpg"}
-                    alt={userData.name}
+                    src={user?.body?.avatar_url || "/test1.jpg"}
+                    alt={user?.body?.name}
                     width={96}
                     height={96}
                     className="object-cover"
                   />
                 </div>
-                <h2 className="text-xl font-bold mb-1">{userData.name}</h2>
-                <p className="text-muted-foreground text-sm mb-2">{userData.email}</p>
+                <h2 className="text-xl font-bold mb-1">{user?.body?.name}</h2>
+                <p className="text-muted-foreground text-sm mb-2">{user?.body?.email}</p>
               </div>
               <div className="mt-6">
                 <nav className="space-y-2">
+                  
                   <button
-                    onClick={() => setActiveTab("profile")}
+                    onClick={() => setActiveTab("change-info")}
                     className={`flex items-center gap-3 px-3 py-2 rounded-md w-full text-left ${
-                      activeTab === "profile" ? "bg-primary-10 text-primary" : "text-muted-foreground hover:text-white"
+                      activeTab === "change-info"
+                        ? "bg-primary-10 text-primary"
+                        : "text-muted-foreground hover:text-white"
                     }`}
                   >
                     <svg
@@ -233,7 +214,7 @@ export default function ProfilePage() {
                     <span>Payment History</span>
                   </button>
                   <button
-                    onClick={() => setActiveTab("change-password")}
+                    onClick={() => setShowPasswordModal(true)}
                     className={`flex items-center gap-3 px-3 py-2 rounded-md w-full text-left ${
                       activeTab === "change-password"
                         ? "bg-primary-10 text-primary"
@@ -264,13 +245,13 @@ export default function ProfilePage() {
 
         {/* Main Content */}
         <div className="w-full lg:w-2/3">
-          {/* Profile Tab */}
-          {activeTab === "profile" && (
+          {/* Change Info Tab */}
+          {activeTab === "change-info" && (
             <div data-active-tab="true">
-              <h1 className="text-2xl font-bold mb-6">Profile Information</h1>
+              <h1 className="text-2xl font-bold mb-6">Edit Profile Information</h1>
 
               <div className="bg-card border rounded-lg overflow-hidden">
-                <div className="p-6">
+                <form onSubmit={handleProfileSubmit} className="p-6">
                   <div className="flex flex-col items-center mb-6">
                     <div
                       className="relative"
@@ -282,8 +263,8 @@ export default function ProfilePage() {
                         onClick={() => document.getElementById("avatar-upload").click()}
                       >
                         <Image
-                          src={avatarPreview || userData.avatar || "/test1.jpg"}
-                          alt={userData.name}
+                          src={avatarPreview || user?.body?.avatar_url || "/test1.jpg"}
+                          alt={user?.body?.name}
                           width={128}
                           height={128}
                           className="object-cover"
@@ -308,14 +289,6 @@ export default function ProfilePage() {
                           </svg>
                         </div>
                       </div>
-
-                      {/* Tooltip */}
-                      {showAvatarTooltip && (
-                        <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-primary text-black px-3 py-1 rounded-md text-sm font-medium whitespace-nowrap">
-                          Click to upload photo
-                          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary rotate-45"></div>
-                        </div>
-                      )}
 
                       <label
                         htmlFor="avatar-upload"
@@ -346,10 +319,9 @@ export default function ProfilePage() {
                       </label>
                     </div>
                   </div>
-
-                  <form onSubmit={handleProfileSubmit} className="space-y-4">
+                  <div className="space-y-4">
                     <div>
-                      <label htmlFor="name" className="text-sm text-muted-foreground mb-1 block">
+                      <label htmlFor="name" className="text-sm .text-primary mb-1 block">
                         Full Name
                       </label>
                       <input
@@ -364,7 +336,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div>
-                      <label htmlFor="email" className="text-sm text-muted-foreground mb-1 block">
+                      <label htmlFor="email" className="text-sm .text-primary mb-1 block">
                         Email Address
                       </label>
                       <div className="bg-input border w-full px-3 py-2 rounded-md text-muted-foreground">
@@ -374,7 +346,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div>
-                      <label htmlFor="phone" className="text-sm text-muted-foreground mb-1 block">
+                      <label htmlFor="phone" className="text-sm .text-primary mb-1 block">
                         Phone Number
                       </label>
                       <input
@@ -384,7 +356,7 @@ export default function ProfilePage() {
                         value={userProfile.phone}
                         onChange={handleProfileChange}
                         className="bg-input border w-full px-3 py-2 rounded-md"
-                        placeholder="+84 123 456 789"
+                        placeholder="Text your phone number"
                       />
                     </div>
 
@@ -393,11 +365,128 @@ export default function ProfilePage() {
                         Save Changes
                       </button>
                     </div>
-                  </form>
-                </div>
+                  </div>
+                </form>
               </div>
             </div>
           )}
+
+          {/* My Tickets Tab */}
+          {activeTab === "tickets" && (
+            <div data-active-tab="true">
+              <h1 className="text-2xl font-bold mb-6">My Tickets</h1>
+
+              <div className="space-y-6">
+                {bookingHistory.map((booking) => (
+                  <div key={booking.id} className="bg-card border rounded-lg overflow-hidden">
+                    <div className="flex flex-col md:flex-row">
+                      <div className="max-w-2xl md:w-1/4 relative" style={{ minHeight: "200px" }}>
+                        <Image
+                          src={booking.poster || "/test1.jpg"}
+                          alt={booking.movieTitle}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="p-6 flex-1">
+                        <div className="flex flex-col md:flex-row justify-between mb-4">
+                          <div>
+                            <h2 className="text-xl font-bold">{booking.movieTitle}</h2>
+                            <p className="text-muted-foreground text-sm">Booking ID: {booking.id}</p>
+                          </div>
+                          <div className="mt-2 md:mt-0">
+                            <span className="text-primary font-bold">{booking.totalAmount}</span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                          <div>
+                            <p className="text-muted-foreground text-xs mb-1">Date & Time</p>
+                            <div className="flex items-center gap-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-primary"
+                              >
+                                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                                <line x1="16" x2="16" y1="2" y2="6" />
+                                <line x1="8" x2="8" y1="2" y2="6" />
+                                <line x1="3" x2="21" y1="10" y2="10" />
+                              </svg>
+                              <span>{booking.date}</span>
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-primary"
+                              >
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                              </svg>
+                              <span>{booking.time}</span>
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground text-xs mb-1">Theater</p>
+                            <div className="flex items-center gap-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-primary"
+                              >
+                                <path d="M19.5 14c-1.4 0-2.5 1.1-2.5 2.5 0 .2 0 .5.1.7l-3.5 3.5c-.2-.1-.5-.1-.7-.1-1.4 0-2.5 1.1-2.5 2.5s1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5c0-.2 0-.5-.1-.7l3.5-3.5c.2.1.5.1.7.1 1.4 0 2.5-1.1 2.5-2.5s-1.1-2.5-2.5-2.5z" />
+                                <path d="M12 2C6.5 2 2 6.5 2 12c0 2.3.8 4.5 2.3 6.3" />
+                                <path d="M9 22v-1c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v1" />
+                                <path d="M12 11h.01" />
+                              </svg>
+                              <span>{booking.theater}</span>
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground text-xs mb-1">Seats</p>
+                            <div className="flex flex-wrap gap-2">
+                              {booking.seats.map((seat, index) => (
+                                <span key={index} className="bg-input px-2 py-1 rounded-md text-sm">
+                                  {seat}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <button className="primary-button">View Ticket</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {activeTab === "payment-history" && (
             <div data-active-tab="true">
               <h1 className="text-2xl font-bold mb-6">Payment History</h1>
@@ -420,70 +509,57 @@ export default function ProfilePage() {
               </div>
             </div>
           )}
-
-          {activeTab === "change-password" && (
-            <div data-active-tab="true">
-              <h1 className="text-2xl font-bold mb-6">Change Password</h1>
-
-              <div className="bg-card border rounded-lg overflow-hidden">
-                <div className="p-6">
-                  <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                    <div>
-                      <label htmlFor="currentPassword" className="text-sm text-muted-foreground mb-1 block">
-                        Current Password
-                      </label>
-                      <input
-                        type="password"
-                        id="currentPassword"
-                        name="currentPassword"
-                        value={passwordData.currentPassword}
-                        onChange={handlePasswordChange}
-                        className="bg-input border w-full px-3 py-2 rounded-md"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="newPassword" className="text-sm text-muted-foreground mb-1 block">
-                        New Password
-                      </label>
-                      <input
-                        type="password"
-                        id="newPassword"
-                        name="newPassword"
-                        value={passwordData.newPassword}
-                        onChange={handlePasswordChange}
-                        className="bg-input border w-full px-3 py-2 rounded-md"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="confirmPassword" className="text-sm text-muted-foreground mb-1 block">
-                        Confirm New Password
-                      </label>
-                      <input
-                        type="password"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        value={passwordData.confirmPassword}
-                        onChange={handlePasswordChange}
-                        className="bg-input border w-full px-3 py-2 rounded-md"
-                        required
-                      />
-                    </div>
-
-                    <div className="pt-4">
-                      <button type="submit" className="primary-button">
-                        Update Password
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Change Password Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black-80 flex items-center justify-center p-4 z-30">
+          <div className="bg-card border rounded-lg w-full max-w-md p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold">Change Password</h2>
+              <button onClick={() => setShowPasswordModal(false)} className="text-muted-foreground hover:text-white">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-muted-foreground mb-1 block">Current Password</label>
+                <input type="password" className="bg-input border" />
+              </div>
+              <div>
+                <label className="text-sm text-muted-foreground mb-1 block">New Password</label>
+                <input type="password" className="bg-input border" />
+              </div>
+              <div>
+                <label className="text-sm text-muted-foreground mb-1 block">Confirm New Password</label>
+                <input type="password" className="bg-input border" />
+              </div>
+
+              <div className="pt-4 flex gap-3">
+                <button className="primary-button">Update Password</button>
+                <button className="secondary-button" onClick={() => setShowPasswordModal(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-

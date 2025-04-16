@@ -1,5 +1,5 @@
 import Sidebar from "@/components/dashboard/SideBar"
- 
+
 export default function DashboardLayout({ children }) {
     return (
         <div className="flex min-h-screen">
@@ -8,3 +8,4 @@ export default function DashboardLayout({ children }) {
         </div>
     )
 }
+

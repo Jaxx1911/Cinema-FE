@@ -12,6 +12,7 @@ export const useGetCinemaById = (id) => {
     return useQuery({
         queryKey: ['cinema', id],
         queryFn: () => cinemaService.getCinemaById(id),
+        enabled: !!id,
     })
 }
 

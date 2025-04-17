@@ -25,5 +25,18 @@ export const orderService = {
     } catch (error) {
       throw error.response?.data || error
     }
+  },
+  getOrderWithPayment: async (orderId) => {
+    try {
+      const token = tokenStorage.getAccessToken()
+      const response = await orderApi.get(`/order/qr/${orderId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error) {
+      throw error.response?.data || error
+    }
   }
 } 

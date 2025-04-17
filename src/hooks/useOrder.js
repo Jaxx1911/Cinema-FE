@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { orderService } from '@/services/order'
 import { toast } from 'react-hot-toast'
 
@@ -22,3 +22,17 @@ export const useCreateOrder = () => {
     data: createOrderMutation.data
   }
 } 
+
+export const useGetOrderWithPayment = (id) => {
+  const getOrderWithPaymentQuery = useQuery({
+    queryKey: ['order', id],
+    queryFn: () => orderService.getOrderWithPayment(id)
+  })
+
+  return {
+    data: getOrderWithPaymentQuery.data,
+    isLoading: getOrderWithPaymentQuery.isLoading,
+    error: getOrderWithPaymentQuery.error
+  }
+}
+

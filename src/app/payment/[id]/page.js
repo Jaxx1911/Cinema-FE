@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { ChevronLeft, Clock, Check, AlertCircle } from "lucide-react"
@@ -13,6 +13,7 @@ import { QRCodeSVG } from 'qrcode.react'
 
 export default function PaymentPage() {
     const { id } = useParams()
+    const router = useRouter()
     const { data: orderData, isLoading } = useGetOrderWithPayment(id)
     const { data: showtimeData, refetch: refetchShowtime } = useGetShowtimeById(orderData?.body?.order.showtime_id)
     const { data: movieData, refetch: refetchMovie } = useMovieDetails(showtimeData?.body?.movie_id)
@@ -30,6 +31,44 @@ export default function PaymentPage() {
             refetchMovie()
         }
     }, [showtimeData])
+
+    useEffect(() => {
+        // Connect to WebSocket
+        const ws = new WebSocket('ws://localhost:8000/ws?t=' + 'Bearer ' + localStorage.getItem('access_token') + '&r=payment')
+
+        ws.onopen = () => {
+            console.log('WebSocket Connected')
+            // Send order ID to subscribe to payment updates
+            ws.send(JSON.stringify({ orderId: id }))
+        }
+
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data)
+            console.log(data)
+            if (data.data.message === 'success') {
+                setPaymentStatus('success')
+                // Redirect to payment success page after 2 seconds
+                // setTimeout(() => {
+                //     router.push(`/payment/success/${id}`)
+                // }, 2000)
+            } else if (data.status === 'failed') {
+                setPaymentStatus('failed')
+            }
+        }
+
+        ws.onerror = (error) => {
+            console.error('WebSocket error:', error)
+        }
+
+        ws.onclose = () => {
+            console.log('WebSocket Disconnected')
+        }
+
+        // Cleanup on component unmount
+        return () => {
+            ws.close()
+        }
+    }, [])
 
     const movie = {
         id: movieData?.body?.id,
@@ -134,7 +173,7 @@ export default function PaymentPage() {
                             <p className="text-sm text-muted-foreground mb-6">
                                 Your payment has been processed successfully. Your tickets are ready.
                             </p>
-                            <Link href={`/ticket/${movie.id}`} className="primary-button">
+                            <Link href={`/tickets`} className="primary-button">
                                 View My Ticket
                             </Link>
                         </>

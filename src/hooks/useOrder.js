@@ -36,3 +36,16 @@ export const useGetOrderWithPayment = (id) => {
   }
 }
 
+export const useGetOrderFullDetail = (id) => {
+  const getOrderFullDetailQuery = useQuery({
+    queryKey: ['order', id],
+    queryFn: () => orderService.getOrderFullDetail(id),
+    enabled: !!id
+  })
+
+  return {
+    data: getOrderFullDetailQuery.data,
+    isLoading: getOrderFullDetailQuery.isLoading,
+    error: getOrderFullDetailQuery.error
+  }
+}

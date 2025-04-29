@@ -240,7 +240,7 @@ export default function MovieDetailPage() {
                   className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  title={`${movie.title} Trailer`}
+                  title={`${movies.title} Trailer`}
                 ></iframe>
               </div>
             </div>

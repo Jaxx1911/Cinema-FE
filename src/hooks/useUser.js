@@ -25,3 +25,16 @@ export function useUpdateUser(userId) {
     })
 }
 
+export function useGetUserOrders() {
+    return useQuery({
+        queryKey: ["userOrders"],
+        queryFn: userService.getUserOrders,
+    })
+}
+
+export function useGetUserPayments() {
+    return useQuery({
+        queryKey: ["userPayments"],
+        queryFn: userService.getUserPayments,
+    })
+}

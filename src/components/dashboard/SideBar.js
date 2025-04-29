@@ -20,7 +20,6 @@ export default function Sidebar() {
         console.log(isErrorUserInfo)
         localStorage.clear()
         router.push("/")
-        window.location.reload()
     }
 
     const isActive = (path) => {

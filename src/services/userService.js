@@ -29,10 +29,24 @@ export const userService = {
         const response = await userApi.put(`/user/${userData.id}`, userData)
         return response.data
     },
-    deleteUser: async (userId) => {
-        const response = await userApi.delete(`/user/${userId}`)
+    getUserOrders: async () => {
+        const token = tokenStorage.getAccessToken()
+        const response = await userApi.get(`/user/orders`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         return response.data
     },
+    getUserPayments: async () => {
+        const token = tokenStorage.getAccessToken()
+        const response = await userApi.get(`/user/payments`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        return response.data
+    }
 }
 
 export default userService

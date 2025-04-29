@@ -7,7 +7,19 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
     const firstSeat = `${row}${isEvenSeat ? col - 1 : col}`
     const secondSeat = `${row}${isEvenSeat ? col : col + 1}`
 
-    toggleSeat(firstSeat, secondSeat)
+    const firstSeatData = seatMap?.[firstSeat]
+    const secondSeatData = seatMap?.[secondSeat]
+    
+    // Check if either seat is selected
+    const isSelected = tickets[firstSeatData?.id]?.status === "selected" || tickets[secondSeatData?.id]?.status === "selected"
+    
+    // If selected, we want to deselect both seats
+    if (isSelected) {
+      toggleSeat(firstSeat, secondSeat)
+    } else {
+      // If not selected, we want to select both seats
+      toggleSeat(firstSeat, secondSeat)
+    }
   }
 
   return (
@@ -47,11 +59,11 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
                               : "bg-[#333] opacity-50 cursor-not-allowed"
                         }`}
                         onClick={() => {
-                          if (tickets[seat?.id]?.status === "available") {
+                          if (tickets[seat?.id]?.status === "available" || tickets[seat?.id]?.status === "selected") {
                             toggleSeat(`${row}${col}`)
                           }
                         }}
-                        disabled={tickets[seat?.id]?.status !== "available"}
+                        disabled={tickets[seat?.id]?.status !== "available" && tickets[seat?.id]?.status !== "selected"}
                       >
                         {row}
                         {col}
@@ -70,7 +82,7 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
                   const seat = seatMap?.[`${lastRow}${col}`]
                   const nextSeat = seatMap?.[`${lastRow}${col + 1}`]
                   const isSelected = tickets[seat?.id]?.status === "selected" || tickets[nextSeat?.id]?.status === "selected"
-                  const isReserved = tickets[seat?.id]?.status !== "available" || tickets[nextSeat?.id]?.status !== "available"
+                  const isReserved = tickets[seat?.id]?.status === "reserved" || tickets[nextSeat?.id]?.status === "reserved"
 
                   return (
                     <button
@@ -83,11 +95,11 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
                             : "bg-[#333] opacity-50 cursor-not-allowed"
                       }`}
                       onClick={() => {
-                        if (!isReserved) {
+                        if (!isReserved || isSelected) {
                           handleCoupleSeatClick(lastRow, col)
                         }
                       }}
-                      disabled={isReserved}
+                      disabled={isReserved && !isSelected}
                     >
                       {`${lastRow}${col}-${col+1}`}
                     </button>

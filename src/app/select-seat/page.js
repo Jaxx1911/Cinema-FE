@@ -68,7 +68,7 @@ export default function SelectSeat() {
     })
     setTickets(newTickets)
 
-    if (selectedSeats.includes(listSeatId[0])) {
+    if (newStatus === 'available') {
       setSelectedSeats(selectedSeats.filter(id => !listSeatId.includes(id)))
     } else {
       setSelectedSeats([...selectedSeats, ...listSeatId].sort(
@@ -107,8 +107,8 @@ export default function SelectSeat() {
     }, 500)
   }
 
-  const handleContinueToPayment = () => {
-    //router.push(`/payment?m=${movieId}&s=${showtimeId}&seats=${selectedSeats.join(',')}&combos=${JSON.stringify(selectedCombos)}&discount=${discountAmount}`)
+  const handleContinueToPayment = (id) => {
+    router.push(`/payment/${id}`)
   }
 
   const totalPrice = selectedSeats.reduce((total, seatId) => {

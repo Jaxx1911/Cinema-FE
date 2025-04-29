@@ -38,6 +38,14 @@ body {
   align-items: center;
 }
 
+.items-start {
+  align-items: flex-start;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
 .justify-center {
   justify-content: center;
 }
@@ -129,6 +137,58 @@ body {
   padding-bottom: 1rem;
 }
 
+.pt-2 {
+  padding-top: 0.5rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
+}
+
+.pt-6 {
+  padding-top: 1.5rem;
+}
+
+.pt-8 {
+  padding-top: 2rem;
+}
+
+.pt-10 {
+  padding-top: 2.5rem;
+}
+
+.pt-12 {
+  padding-top: 3rem;
+}
+
+.pt-14 {
+  padding-top: 3.5rem;
+}
+
+.pt-16 {
+  padding-top: 4rem;
+}
+
+.pt-18 {
+  padding-top: 4.5rem;
+}
+
+.pt-20 {
+  padding-top: 5rem;
+}
+
+.pt-24 {
+  padding-top: 6rem;
+}
+
+.mb-auto {
+  margin-bottom: auto;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -179,6 +239,10 @@ body {
 
 .-mt-4 {
   margin-top: -1rem;
+}
+
+.mt-auto {
+  margin-top: auto;
 }
 
 .mt-0 {
@@ -243,6 +307,10 @@ body {
 
 .mr-8 {
   margin-right: 2rem;
+}
+
+.ml-auto {
+  margin-left: auto;
 }
 
 .ml-1 {
@@ -566,6 +634,11 @@ body {
 .bg-primary\/30 {
   background-color: var(--primary);
   opacity: 0.3;
+}
+
+.bg-primary\/20 {
+  background-color: var(--primary);
+  opacity: 0.2;
 }
 
 .bg-primary\/10 {

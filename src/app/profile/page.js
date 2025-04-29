@@ -4,6 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useUserInfo } from "@/hooks/useUser"
+import PaymentCard from "@/components/profile/PaymentCard"
 // Sample user data
 const userData = {
   name: "Angelina",
@@ -11,84 +12,6 @@ const userData = {
   phone: "+84 123 456 789",
   avatar: "/test1.jpg?height=150&width=150",
 }
-
-// Sample booking history
-const bookingHistory = [
-  {
-    id: "B12345",
-    movieTitle: "Dune: Part Two",
-    poster: "/test1.jpg?height=450&width=300",
-    date: "June 15, 2024",
-    time: "7:30 PM",
-    theater: "Cinema City - IMAX",
-    seats: ["G12", "G13"],
-    totalAmount: "125.000 VNĐ",
-  },
-  {
-    id: "B12289",
-    movieTitle: "Godzilla x Kong",
-    poster: "/test1.jpg?height=450&width=300",
-    date: "May 28, 2024",
-    time: "8:45 PM",
-    theater: "Cinema City - Screen 3",
-    seats: ["F5", "F6", "F7"],
-    totalAmount: "300.000 VNĐ",
-  },
-  {
-    id: "B11987",
-    movieTitle: "The Fall Guy",
-    poster: "/test1.jpg?height=450&width=300",
-    date: "May 10, 2024",
-    time: "6:15 PM",
-    theater: "Starlight Cinema",
-    seats: ["D8", "D9"],
-    totalAmount: "515.000 VNĐ",
-  },
-]
-
-// Sample payment history
-const paymentHistory = [
-  {
-    id: "P78901",
-    date: "June 15, 2024",
-    amount: "200.000 VNĐ",
-    method: "VNPay",
-    movieTitle: "Dune: Part Two",
-    status: "Completed",
-  },
-  {
-    id: "P78890",
-    date: "May 28, 2024",
-    amount: "515.000 VNĐ",
-    method: "VietQR",
-    movieTitle: "Godzilla x Kong",
-    status: "Completed",
-  },
-  {
-    id: "P78456",
-    date: "May 10, 2024",
-    amount: "231.000 VNĐ",
-    method: "VNPay",
-    movieTitle: "The Fall Guy",
-    status: "Completed",
-  },
-  {
-    id: "P77123",
-    date: "April 22, 2024",
-    amount: "235.000 VNĐ",
-    method: "VietQR",
-    movieTitle: "The Avengers: Endgame",
-    status: "Completed",
-  },
-  {
-    id: "P76890",
-    date: "March 22, 2024",
-    amount: "150.000 VNĐ",
-    method: "VNPay",
-    movieTitle: "Interstellar",
-    status: "Completed",
-  },
-]
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("change-info")
@@ -153,7 +76,7 @@ export default function ProfilePage() {
                 <div className="w-24 h-24 rounded-full overflow-hidden bg-input border-2 border-primary mb-4">
                   <Image
                     src={user?.body?.avatar_url || "/test1.jpg"}
-                    alt={user?.body?.name}
+                    alt={user?.body?.name || "User Avatar"}
                     width={96}
                     height={96}
                     className="object-cover"
@@ -264,7 +187,7 @@ export default function ProfilePage() {
                       >
                         <Image
                           src={avatarPreview || user?.body?.avatar_url || "/test1.jpg"}
-                          alt={user?.body?.name}
+                          alt={user?.body?.name || "User Avatar"}
                           width={128}
                           height={128}
                           className="object-cover"
@@ -371,143 +294,8 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* My Tickets Tab */}
-          {activeTab === "tickets" && (
-            <div data-active-tab="true">
-              <h1 className="text-2xl font-bold mb-6">My Tickets</h1>
-
-              <div className="space-y-6">
-                {bookingHistory.map((booking) => (
-                  <div key={booking.id} className="bg-card border rounded-lg overflow-hidden">
-                    <div className="flex flex-col md:flex-row">
-                      <div className="max-w-2xl md:w-1/4 relative" style={{ minHeight: "200px" }}>
-                        <Image
-                          src={booking.poster || "/test1.jpg"}
-                          alt={booking.movieTitle}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="p-6 flex-1">
-                        <div className="flex flex-col md:flex-row justify-between mb-4">
-                          <div>
-                            <h2 className="text-xl font-bold">{booking.movieTitle}</h2>
-                            <p className="text-muted-foreground text-sm">Booking ID: {booking.id}</p>
-                          </div>
-                          <div className="mt-2 md:mt-0">
-                            <span className="text-primary font-bold">{booking.totalAmount}</span>
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                          <div>
-                            <p className="text-muted-foreground text-xs mb-1">Date & Time</p>
-                            <div className="flex items-center gap-2">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="text-primary"
-                              >
-                                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                                <line x1="16" x2="16" y1="2" y2="6" />
-                                <line x1="8" x2="8" y1="2" y2="6" />
-                                <line x1="3" x2="21" y1="10" y2="10" />
-                              </svg>
-                              <span>{booking.date}</span>
-                            </div>
-                            <div className="flex items-center gap-2 mt-1">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="text-primary"
-                              >
-                                <circle cx="12" cy="12" r="10" />
-                                <polyline points="12 6 12 12 16 14" />
-                              </svg>
-                              <span>{booking.time}</span>
-                            </div>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground text-xs mb-1">Theater</p>
-                            <div className="flex items-center gap-2">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="text-primary"
-                              >
-                                <path d="M19.5 14c-1.4 0-2.5 1.1-2.5 2.5 0 .2 0 .5.1.7l-3.5 3.5c-.2-.1-.5-.1-.7-.1-1.4 0-2.5 1.1-2.5 2.5s1.1 2.5 2.5 2.5 2.5-1.1 2.5-2.5c0-.2 0-.5-.1-.7l3.5-3.5c.2.1.5.1.7.1 1.4 0 2.5-1.1 2.5-2.5s-1.1-2.5-2.5-2.5z" />
-                                <path d="M12 2C6.5 2 2 6.5 2 12c0 2.3.8 4.5 2.3 6.3" />
-                                <path d="M9 22v-1c0-1.1.9-2 2-2h2a2 2 0 0 1 2 2v1" />
-                                <path d="M12 11h.01" />
-                              </svg>
-                              <span>{booking.theater}</span>
-                            </div>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground text-xs mb-1">Seats</p>
-                            <div className="flex flex-wrap gap-2">
-                              {booking.seats.map((seat, index) => (
-                                <span key={index} className="bg-input px-2 py-1 rounded-md text-sm">
-                                  {seat}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <button className="primary-button">View Ticket</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {activeTab === "payment-history" && (
-            <div data-active-tab="true">
-              <h1 className="text-2xl font-bold mb-6">Payment History</h1>
-
-              <div className="bg-card border rounded-lg overflow-hidden">
-                <div className="p-4">
-                  {paymentHistory.map((payment) => (
-                    <div key={payment.id} className="flex justify-between items-center py-3 border-b">
-                      <div>
-                        <h3 className="font-medium">{payment.movieTitle}</h3>
-                        <p className="text-sm text-muted-foreground">{payment.date}</p>
-                      </div>
-
-                      <div>
-                        <span className="text-primary font-bold">{payment.amount}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <PaymentCard />
           )}
         </div>
       </div>

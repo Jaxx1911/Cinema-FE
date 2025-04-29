@@ -52,8 +52,9 @@ const OrderConfirmation = ({
     console.log('Final order data:', orderData);
 
     createOrder(orderData, {
-      onSuccess: () => {
-        onConfirm();
+      onSuccess: (data) => {
+        console.log('Order created:', data);
+        onConfirm(data.body.id);
       }
     });
   };

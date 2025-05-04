@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { tokenStorage } from '@/utils/tokenStorage'
+import { FoldHorizontal } from 'lucide-react'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
 
@@ -26,7 +27,12 @@ export const userService = {
         return response.data
     },
     updateUser: async (userData) => {
-        const response = await userApi.put(`/user/${userData.id}`, userData)
+        const token = tokenStorage.getAccessToken()
+        const response = await userApi.put(`/user`, userData, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         return response.data
     },
     getUserOrders: async () => {
@@ -44,6 +50,21 @@ export const userService = {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
+        })
+        return response.data
+    },
+    changeAvatar: async (file) => {
+        console.log(file);
+        
+        const token = tokenStorage.getAccessToken()
+        const response = await userApi.putForm(`/user/avatar`, 
+            {
+                file: file
+            }, {
+            headers: {
+                'Authorization': `Bearer ${token}`  
+            },
+            'Content-Type': 'multipart/form-data'
         })
         return response.data
     }

@@ -37,13 +37,15 @@ export default function Sidebar() {
                 <h1 className="text-2xl font-bold text-primary mb-8">MBCKing</h1>
 
                 <div className="flex items-center gap-3 mb-8 p-3 bg-input rounded-lg">
-                    <Image
-                        src={userInfo?.body?.avatar_url || "/test1.jpg?height=40&width=40"}
-                        alt="Profile"
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                    />
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-input border-2 border-primary">
+                        <Image
+                            src={userInfo?.body?.avatar_url || "/test1.jpg?height=40&width=40"}
+                            alt="Profile"
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
                     <div>
                         <p className="font-medium">{userInfo?.body?.name}</p>
                         <p className="text-xs text-muted-foreground">Premium Member</p>

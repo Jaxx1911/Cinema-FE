@@ -16,9 +16,9 @@ export function useListUser() {
     })
 }
 
-export function useUpdateUser(userId) {
+export function useUpdateUser(userData) {
     return useMutation({
-        mutationFn: userService.updateUser,
+        mutationFn: userService.updateUser(userData),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["userInfo"] })
         },

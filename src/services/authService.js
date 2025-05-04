@@ -62,6 +62,16 @@ export const authService = {
     return response.data
   },
 
+  changePassword: async (credentials) => {
+    const token = tokenStorage.getAccessToken()
+    const response = await authApi.post(`/auth/change-password`, credentials, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    return response.data
+  },
+
   // Add interceptor to handle token
   setAuthHeader: (token) => {
     authApi.defaults.headers.common['Authorization'] = `Bearer ${token}`

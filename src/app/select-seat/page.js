@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { Suspense } from "react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -15,7 +15,7 @@ import BookingSummary from "@/components/select-seat/BookingSummary"
 import OrderConfirmation from "@/components/select-seat/OrderConfirmation"
 import { useApplyDiscount } from "@/hooks/useDiscount"
 
-export default function SelectSeat() {
+function SelectSeatContent() {
   const params = useSearchParams()
   const router = useRouter()
   const [selectedSeats, setSelectedSeats] = useState([])
@@ -247,6 +247,18 @@ export default function SelectSeat() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function SelectSeat() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <SelectSeatContent />
+    </Suspense>
   )
 }
 

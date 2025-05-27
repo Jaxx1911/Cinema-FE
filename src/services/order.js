@@ -51,5 +51,18 @@ export const orderService = {
     } catch (error) {
       throw error.response?.data || error
     }
+  },
+  deleteOrder: async (orderId) => {
+    try {
+      const token = tokenStorage.getAccessToken()
+      const response = await orderApi.delete(`/order/${orderId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      return response.data
+    } catch (error) {
+      throw error.response?.data || error
+    }
   }
 } 

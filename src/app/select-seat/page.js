@@ -13,6 +13,7 @@ import SeatMatrix from "@/components/select-seat/SeatMatrix"
 import PopcornCombo from "@/components/select-seat/PopcornCombo"
 import BookingSummary from "@/components/select-seat/BookingSummary"
 import OrderConfirmation from "@/components/select-seat/OrderConfirmation"
+import { useApplyDiscount } from "@/hooks/useDiscount"
 
 export default function SelectSeat() {
   const params = useSearchParams()
@@ -24,6 +25,7 @@ export default function SelectSeat() {
   const [selectedCombos, setSelectedCombos] = useState([])
   const [promoCodeApplied, setPromoCodeApplied] = useState(false)
   const [discountAmount, setDiscountAmount] = useState(0)
+  const [discountId, setDiscountId] = useState(null)
   
   const showtimeId = params.get("s")
   const movieId = params.get("m")
@@ -31,6 +33,7 @@ export default function SelectSeat() {
   const { data: movieDetails } = useMovieDetails(movieId)
   const { data: showtimeDetails } = useGetShowtimeById(showtimeId)
   const { data: listSeats } = useGetSeatsByRoomId(showtimeDetails?.body?.room?.id)
+  const { mutate: applyDiscount, isError } = useApplyDiscount()
 
   const seatMap = listSeats?.body?.reduce((acc, seat) => {
     acc[seat.row_number + seat.seat_number] = seat
@@ -97,14 +100,43 @@ export default function SelectSeat() {
     })
   }
 
-  const handleApplyPromoCode = (code) => {
-    // Giả lập API call kiểm tra mã giảm giá
-    setTimeout(() => {
-      if (code === 'DISCOUNT20') {
-        setPromoCodeApplied(true)
-        setDiscountAmount(Math.floor(totalPrice * 0.2)) // Giảm 20%
+  const handleApplyPromoCode = (code, callbacks) => {
+    applyDiscount(code, {
+      onSuccess: (data) => {
+        if (data.body) {
+          const now = new Date()
+          const startDate = new Date(data.body.start_date)
+          const endDate = new Date(data.body.end_date)
+
+          if (now < startDate || now > endDate) {
+            setPromoCodeApplied(false)
+            setDiscountAmount(0)
+            setDiscountId(null)
+            callbacks?.onError?.('Mã giảm giá không trong khoảng thời gian áp dụng')
+            return
+          }
+
+          if (data.body.usage_limit <= 0) {
+            setPromoCodeApplied(false)
+            setDiscountAmount(0)
+            setDiscountId(null)
+            callbacks?.onError?.('Mã giảm giá đã hết lượt sử dụng')
+            return
+          }
+
+          setPromoCodeApplied(true)
+          setDiscountId(data.body.id)
+          const discountAmount = (totalPrice * data.body.percentage) / 100
+          setDiscountAmount(discountAmount)
+        }
+      },
+      onError: () => {
+        setPromoCodeApplied(false)
+        setDiscountAmount(0)
+        setDiscountId(null)
+        callbacks?.onError?.('Mã giảm giá không hợp lệ')
       }
-    }, 500)
+    })
   }
 
   const handleContinueToPayment = (id) => {
@@ -208,6 +240,7 @@ export default function SelectSeat() {
                 discountAmount={discountAmount}
                 seatMap={seatMap}
                 ticketMap={initialTickets}
+                discountId={discountId}
               />
             </div>
           </>

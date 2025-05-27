@@ -207,8 +207,14 @@ export default function MovieDetailPage() {
             </div>      
 
             <div className="grid grid-cols-6 md:grid-cols-6 lg:grid-cols-7 gap-4 mb-8">
-              {showtimes?.body?.filter((showtime) => showtime.room.type === roomType.name).length > 0 ? (
-                showtimes?.body?.filter((showtime) => showtime.room.type === roomType.name).map((showtime) => (
+              {showtimes?.body?.filter((showtime) => 
+                showtime.room.type === roomType.name && 
+                new Date(showtime.start_time) >= new Date()
+              ).length > 0 ? (
+                showtimes?.body?.filter((showtime) => 
+                  showtime.room.type === roomType.name && 
+                  new Date(showtime.start_time) >= new Date()
+                ).map((showtime) => (
                   <Link
                     key={showtime.id}
                     href={`/select-seat?s=${showtime.id}&m=${params.id}`}

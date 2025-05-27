@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { CalendarIcon, MapPinIcon, ClockIcon } from 'lucide-react';
+import { CalendarIcon, MapPinIcon, ClockIcon, Building2Icon } from 'lucide-react';
 import { useCreateOrder } from '@/hooks/useOrder';
 import { toast } from 'react-hot-toast';
-
+import { useGetCinemaById } from '@/hooks/useCinema';
 const OrderConfirmation = ({ 
   movieDetails, 
   showtimeDetails, 
@@ -15,24 +15,30 @@ const OrderConfirmation = ({
   promoCodeApplied,
   discountAmount = 0,
   seatMap,
-  ticketMap
+  ticketMap,
+  discountId
 }) => {
   const [promoCode, setPromoCode] = useState('');
   const [error, setError] = useState('');
   const { createOrder, isCreating } = useCreateOrder();
-
+  const { data: cinemaDetails } = useGetCinemaById(showtimeDetails?.body?.room?.cinema_id)
   const handleApplyPromoCode = () => {
     if (!promoCode.trim()) {
       setError('Vui lòng nhập mã giảm giá');
       return;
     }
-    onApplyPromoCode(promoCode);
+    setError(''); // Clear previous error
+    onApplyPromoCode(promoCode, {
+      onError: (errorMessage) => {
+        setError(errorMessage);
+      }
+    });
   };
 
   const handleConfirmOrder = () => {
     const orderData = {
       showtime_id: showtimeDetails?.body?.id,
-      discount_id: promoCodeApplied ? promoCode : null,
+      discount_id: discountId,
       total_price: totalPrice - discountAmount,
       tickets: selectedSeats.map(seatId => {
         const seat = seatMap[seatId]
@@ -66,7 +72,7 @@ const OrderConfirmation = ({
       {/* Movie & Showtime Info */}
       <div className="border-b border-border pb-4 mb-4">
         <h3 className="font-bold mb-2">{movieDetails?.body?.title}</h3>
-        <div className="grid grid-cols-3 gap-2 mb-2">
+        <div className="grid grid-cols-4 gap-2 mb-2">
             <div className="flex items-center gap-2 mb-2">
                 <CalendarIcon className="w-4 h-4" />
                 <p>Ngày: {new Date(showtimeDetails?.body?.start_time).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>
@@ -74,6 +80,10 @@ const OrderConfirmation = ({
             <div className="flex items-center gap-2 mb-2">
                 <ClockIcon className="w-4 h-4" />
                 <p>Suất chiếu: {new Date(showtimeDetails?.body?.start_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</p>
+            </div>
+            <div className="flex items-center gap-2 mb-2">
+                <Building2Icon className="w-4 h-4" />
+                <p>Rạp: {cinemaDetails?.body?.name}</p>
             </div>
             <div className="flex items-center gap-2 mb-2">
                 <MapPinIcon className="w-4 h-4" />
@@ -130,7 +140,7 @@ const OrderConfirmation = ({
           <button
             onClick={handleApplyPromoCode}
             disabled={promoCodeApplied}
-            className={`px-4 py-2 rounded-md ${
+            className={`px-4 py-2 rounded-md cursor-pointer ${
               promoCodeApplied 
                 ? 'bg-green-600 text-white cursor-not-allowed'
                 : 'bg-primary text-black hover:bg-primary/90'

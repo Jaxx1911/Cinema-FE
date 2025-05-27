@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { ChevronLeft, Clock, Check, AlertCircle } from "lucide-react"
-import { useGetOrderWithPayment } from "@/hooks/useOrder"
+import { useGetOrderWithPayment, useDeleteOrder } from "@/hooks/useOrder"
 import { useGetShowtimeById } from "@/hooks/useShowtime"
 import { useMovieDetails } from "@/hooks/useMovie"
 import { useGetCinemaById } from "@/hooks/useCinema"
@@ -19,6 +19,8 @@ export default function PaymentPage() {
     const { data: movieData, refetch: refetchMovie } = useMovieDetails(showtimeData?.body?.movie_id)
     const { data: cinemaData } = useGetCinemaById(showtimeData?.body?.room?.cinema_id)
     const [paymentStatus, setPaymentStatus] = useState("pending") // pending, success, failed
+    const { deleteOrder } = useDeleteOrder(id)
+    const [timeLeft, setTimeLeft] = useState(10) // 10 minutes in seconds
 
     useEffect(() => {
         if (orderData) {
@@ -33,12 +35,30 @@ export default function PaymentPage() {
     }, [showtimeData])
 
     useEffect(() => {
-        // Connect to WebSocket
+        if (!id || !localStorage.getItem('access_token')) { return }
+        
+        // Set timeout for 10 minutes
+        const timeoutId = setTimeout(() => {
+            if (paymentStatus === "pending") {
+                deleteOrder()
+            }
+        }, 10 * 1000) // 10 minutes in milliseconds
+
+        // Countdown timer
+        const countdownInterval = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    clearInterval(countdownInterval)
+                    return 0
+                }
+                return prev - 1
+            })
+        }, 1000)
+
         const ws = new WebSocket('ws://localhost:8000/ws?t=' + 'Bearer ' + localStorage.getItem('access_token') + '&r=payment')
 
         ws.onopen = () => {
             console.log('WebSocket Connected')
-            // Send order ID to subscribe to payment updates
             ws.send(JSON.stringify({ orderId: id }))
         }
 
@@ -47,12 +67,12 @@ export default function PaymentPage() {
             console.log(data)
             if (data.data.message === 'success') {
                 setPaymentStatus('success')
-                // Redirect to payment success page after 2 seconds
-                // setTimeout(() => {
-                //     router.push(`/payment/success/${id}`)
-                // }, 2000)
+                clearTimeout(timeoutId)
+                clearInterval(countdownInterval)
             } else if (data.status === 'failed') {
                 setPaymentStatus('failed')
+                clearTimeout(timeoutId)
+                clearInterval(countdownInterval)
             }
         }
 
@@ -67,8 +87,17 @@ export default function PaymentPage() {
         // Cleanup on component unmount
         return () => {
             ws.close()
+            clearTimeout(timeoutId)
+            clearInterval(countdownInterval)
         }
     }, [])
+
+    // Format time left as MM:SS
+    const formatTimeLeft = () => {
+        const minutes = Math.floor(timeLeft / 60)
+        const seconds = timeLeft % 60
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    }
 
     const movie = {
         id: movieData?.body?.id,
@@ -81,7 +110,7 @@ export default function PaymentPage() {
     return (
         <div className="max-w-3xl mx-auto p-8">
             <div className="flex items-center gap-4 mb-8">
-                <Link href={`/payment/${movie.id}`}>
+                <Link href={`/movies/${movie.id}`}>
                     <ChevronLeft className="w-6 h-6" />
                 </Link>
                 <h1 className="text-2xl font-bold">Payment Confirmation</h1>
@@ -141,6 +170,9 @@ export default function PaymentPage() {
                                 <h3 className="text-lg font-bold mb-2">Scan QR Code to Pay</h3>
                                 <p className="text-sm text-muted-foreground mb-2">
                                     Use your banking app or e-wallet to scan this QR code
+                                </p>
+                                <p className="text-sm text-red-500 mb-2">
+                                    Time left: {formatTimeLeft()}
                                 </p>
                             </div>
 

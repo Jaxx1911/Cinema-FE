@@ -20,7 +20,9 @@ export default function PaymentPage() {
     const { data: cinemaData } = useGetCinemaById(showtimeData?.body?.room?.cinema_id)
     const [paymentStatus, setPaymentStatus] = useState("pending") // pending, success, failed
     const { deleteOrder } = useDeleteOrder(id)
-    const [timeLeft, setTimeLeft] = useState(10) // 10 minutes in seconds
+    const [timeLeft, setTimeLeft] = useState(10 * 60) // 10 minutes in seconds
+    const [showWarning, setShowWarning] = useState(false)
+    const [pendingNavigation, setPendingNavigation] = useState(null)
 
     useEffect(() => {
         if (orderData) {
@@ -42,7 +44,7 @@ export default function PaymentPage() {
             if (paymentStatus === "pending") {
                 deleteOrder()
             }
-        }, 10 * 1000) // 10 minutes in milliseconds
+        }, 10 * 60 * 1000) // 10 minutes in milliseconds
 
         // Countdown timer
         const countdownInterval = setInterval(() => {
@@ -92,6 +94,71 @@ export default function PaymentPage() {
         }
     }, [])
 
+    // Handle beforeunload event
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (paymentStatus === "pending") {
+                e.preventDefault()
+                e.returnValue = ""
+                return ""
+            }
+        }
+
+        window.addEventListener("beforeunload", handleBeforeUnload)
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload)
+    }, [paymentStatus])
+
+    // Handle navigation
+    useEffect(() => {
+        if (paymentStatus === "pending") {
+            // Push a new state to prevent immediate navigation
+            window.history.pushState(null, '', window.location.href)
+
+            const handlePopState = (e) => {
+                if (paymentStatus === "pending") {
+                    e.preventDefault()
+                    setShowWarning(true)
+                    // Push another state to prevent navigation
+                    window.history.pushState(null, '', window.location.href)
+                }
+            }
+
+            window.addEventListener('popstate', handlePopState)
+            return () => window.removeEventListener('popstate', handlePopState)
+        }
+    }, [paymentStatus])
+
+    // Handle link clicks
+    useEffect(() => {
+        const handleClick = (e) => {
+            if (paymentStatus === "pending") {
+                const target = e.target.closest('a')
+                if (target && target.href && !target.href.includes(window.location.pathname)) {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setPendingNavigation(target.href)
+                    setShowWarning(true)
+                }
+            }
+        }
+
+        document.addEventListener('click', handleClick, true)
+        return () => document.removeEventListener('click', handleClick, true)
+    }, [paymentStatus])
+
+    const handleLeavePage = async () => {
+        await deleteOrder()
+        setShowWarning(false)
+        if (pendingNavigation) {
+            window.location.href = pendingNavigation
+        }
+    }
+
+    const handleStay = () => {
+        setShowWarning(false)
+        setPendingNavigation(null)
+    }
+
     // Format time left as MM:SS
     const formatTimeLeft = () => {
         const minutes = Math.floor(timeLeft / 60)
@@ -109,6 +176,32 @@ export default function PaymentPage() {
 
     return (
         <div className="max-w-3xl mx-auto p-8">
+            {/* Warning Dialog */}
+            {showWarning && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-card p-6 rounded-lg max-w-md w-full mx-4">
+                        <h3 className="text-lg font-bold mb-4">Leave Page?</h3>
+                        <p className="text-muted-foreground mb-6">
+                            Your order will be cancelled if you leave this page. Are you sure you want to continue?
+                        </p>
+                        <div className="flex gap-4">
+                            <button
+                                onClick={handleStay}
+                                className="flex-1 py-2 px-4 rounded-md border border-border hover:bg-border"
+                            >
+                                Stay
+                            </button>
+                            <button
+                                onClick={handleLeavePage}
+                                className="flex-1 py-2 px-4 rounded-md bg-red-500 text-white hover:bg-red-600"
+                            >
+                                Leave
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="flex items-center gap-4 mb-8">
                 <Link href={`/movies/${movie.id}`}>
                     <ChevronLeft className="w-6 h-6" />
@@ -124,9 +217,9 @@ export default function PaymentPage() {
                             alt={movie?.title || "Movie Poster"}
                             width={100}
                             height={150}
-                            className="rounded-lg"
+                            className="rounded-lg shrink-0"
                         />
-                        <div>
+                        <div className="flex-1">
                             <h2 className="text-xl font-bold mb-2">{movie?.title}</h2>
                             <p className="text-muted-foreground mb-4">{movie?.genres?.join(", ")}</p>
 

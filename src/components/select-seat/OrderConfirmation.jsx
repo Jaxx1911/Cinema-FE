@@ -103,9 +103,6 @@ const OrderConfirmation = ({
                 </span>
             ))}
             </div>
-          <p className="text-sm mt-2">
-            {selectedSeats.length} x {showtimeDetails?.body?.price?.toLocaleString()} VND
-          </p>
         </div>
       </div>
 

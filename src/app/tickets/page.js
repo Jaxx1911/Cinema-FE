@@ -11,10 +11,19 @@ export default function TicketsPage() {
   const { data: orders, isLoading, error } = useGetUserOrders()
   const [selectedStatus, setSelectedStatus] = useState({ id: 1, name: "Upcoming", value: "upcoming" })
   const [visibleTickets, setVisibleTickets] = useState(0)
+  const [showNotFound, setShowNotFound] = useState(false)
 
   // Reset visibleTickets when status changes
   useEffect(() => {
     setVisibleTickets(0)
+    setShowNotFound(false)
+    
+    // Add a small delay to allow OrderCard components to update their visibility
+    const timer = setTimeout(() => {
+      setShowNotFound(true)
+    }, 100)
+    
+    return () => clearTimeout(timer)
   }, [selectedStatus])
 
   const handleVisibilityChange = useCallback((id, isVisible) => {
@@ -41,7 +50,7 @@ export default function TicketsPage() {
         ))}
       </div>
 
-      {visibleTickets === 0 && (
+      {visibleTickets === 0 && showNotFound && (
         <div className="text-center py-16 bg-card rounded-xl mt-2 mb-2 pt-4 py-2">
           <h2 className="text-xl font-bold mb-2">No tickets found</h2>
           <p className="text-muted-foreground mb-6">You don't have any tickets for this status</p>

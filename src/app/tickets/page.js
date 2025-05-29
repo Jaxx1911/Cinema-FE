@@ -12,15 +12,21 @@ export default function TicketsPage() {
   const [selectedStatus, setSelectedStatus] = useState({ id: 1, name: "Upcoming", value: "upcoming" })
   const [visibleTickets, setVisibleTickets] = useState(0)
 
-  // Reset visibleTickets when status changes
   useEffect(() => {
-    setVisibleTickets(0)
+    setVisibleTickets(new Set())
   }, [selectedStatus])
 
   const handleVisibilityChange = useCallback((id, isVisible) => {
-    setVisibleTickets(prev => isVisible ? prev + 1 : prev)
+    setVisibleTickets(prev => {
+      const newSet = new Set(prev)
+      if (isVisible) {
+        newSet.add(id)
+      } else {
+        newSet.delete(id)
+      }
+      return newSet
+    })
   }, [])
-
   return (
     <div className="max-w-5xl mx-auto p-8">
       <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">
@@ -41,7 +47,7 @@ export default function TicketsPage() {
         ))}
       </div>
 
-      {visibleTickets === 0 && (
+      {visibleTickets.size === 0 && (
         <div className="text-center py-16 bg-card rounded-xl mt-2 mb-2 pt-4 py-2">
           <h2 className="text-xl font-bold mb-2">No tickets found</h2>
           <p className="text-muted-foreground mb-6">You don't have any tickets for this status</p>

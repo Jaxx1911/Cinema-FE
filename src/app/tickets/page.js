@@ -10,23 +10,22 @@ import { useState, useCallback, useEffect } from "react"
 export default function TicketsPage() {
   const { data: orders, isLoading, error } = useGetUserOrders()
   const [selectedStatus, setSelectedStatus] = useState({ id: 1, name: "Upcoming", value: "upcoming" })
-  const [visibleTickets, setVisibleTickets] = useState(0)
+  const [visibleTickets, setVisibleTickets] = useState(new Set())
 
-  useEffect(() => {
-    setVisibleTickets(new Set())
-  }, [selectedStatus])
-
-  const handleVisibilityChange = useCallback((id, isVisible) => {
+const handleVisibilityChange = useCallback((id, isVisible) => {
     setVisibleTickets(prev => {
       const newSet = new Set(prev)
+      
       if (isVisible) {
         newSet.add(id)
       } else {
         newSet.delete(id)
       }
+      
       return newSet
     })
-  }, [])
+}, [])
+
   return (
     <div className="max-w-5xl mx-auto p-8">
       <div className="flex flex-col md:flex-row md:items-center gap-4 mb-8">

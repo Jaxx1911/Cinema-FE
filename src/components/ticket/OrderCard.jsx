@@ -38,10 +38,11 @@ export default function OrderCard({ id, selectedStatus, onVisibilityChange }) {
     }
 
     useEffect(() => {
-        if (order?.body) {
-            onVisibilityChange?.(id, isVisible())
-        }
-    }, [order, selectedStatus, id, onVisibilityChange])
+      if (order?.body) {
+          const visible = isVisible()
+          onVisibilityChange?.(id, visible)
+      }
+      }, [order?.body, selectedStatus, id, onVisibilityChange])
 
     const handleQRClick = () => {
         if (order?.body?.id) {
@@ -68,7 +69,7 @@ export default function OrderCard({ id, selectedStatus, onVisibilityChange }) {
                         alt={order?.body?.movie?.title || "Movie Poster"}
                         width={100}
                         height={150}
-                        className="rounded-lg h-[150px] w-auto object-cover transition-transform duration-300 hover:scale-105"
+                        className="rounded-lg h-auto w-[100px] object-cover transition-transform duration-300 hover:scale-105"
                       />
                     </div>
 

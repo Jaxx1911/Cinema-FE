@@ -41,8 +41,8 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
                     const seat = seatMap?.[`${row}${col}`]
                     const isPremiumSeat = row >= 'D' 
                           && row < String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 2) 
-                          && col >= showtimeDetails?.body?.room?.column_count/2 - 3 
-                          && col <= showtimeDetails?.body?.room?.column_count/2 + 4
+                          && col >= 4 
+                          && col <= showtimeDetails?.body?.room?.column_count - 3
                     
                     const isCoupleSeat = row === String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 1)
 
@@ -53,7 +53,7 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
                           tickets[seat?.id]?.status === "available" || !tickets[seat?.id]
                             ? isPremiumSeat 
                               ? "bg-purple-900 text-white hover:bg-purple-800" 
-                              : "bg-[#222] hover:bg-[#333]"
+                              : "bg-gray-300 hover:bg-gray-100 text-black"
                             : tickets[seat?.id]?.status === "selected"
                               ? "bg-primary text-black"
                               : "bg-[#333] opacity-50 cursor-not-allowed"
@@ -110,7 +110,7 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
 
             <div className="flex justify-center gap-8 text-sm">
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-[#222] rounded-md"></div>
+                <div className="w-4 h-4 bg-gray-300 rounded-md"></div>
                 <span>Available</span>
               </div>
               <div className="flex items-center gap-2">

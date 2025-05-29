@@ -13,7 +13,7 @@ export default function TicketsPage() {
   const [visibleTickets, setVisibleTickets] = useState(0)
 
   const handleVisibilityChange = useCallback((id, isVisible) => {
-    setVisibleTickets(prev => isVisible ? prev + 1 : prev - 1)
+    setVisibleTickets(prev => isVisible ? prev + 1 : prev)
   }, [])
 
   return (
@@ -38,7 +38,6 @@ export default function TicketsPage() {
 
       {visibleTickets === 0 && (
         <div className="text-center py-16 bg-card rounded-xl mt-2 mb-2 pt-4 py-2">
-          <p className="text-primary text-4xl font-bold">404</p>
           <h2 className="text-xl font-bold mb-2">No tickets found</h2>
           <p className="text-muted-foreground mb-6">You don't have any tickets for this status</p>
         </div>

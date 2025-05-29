@@ -34,7 +34,7 @@ export default function Sidebar() {
     return (
         <div className="w-68 h-screen bg-card hover:bg-card/80 transition-colors border-r border fixed left-0 top-0 flex flex-col">
             <div className="p-6">
-                <h1 className="text-2xl font-bold text-primary mb-8">MBCKing</h1>
+                <h1 className="text-2xl font-bold text-primary mb-8">BNC Cinema</h1>
 
                 <div className="flex items-center gap-3 mb-8 p-3 bg-input rounded-lg">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-input border-2 border-primary">
@@ -48,7 +48,6 @@ export default function Sidebar() {
                     </div>
                     <div>
                         <p className="font-medium">{userInfo?.body?.name}</p>
-                        <p className="text-xs text-muted-foreground">Premium Member</p>
                     </div>
                 </div>
 

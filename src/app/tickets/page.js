@@ -5,15 +5,20 @@ import { Calendar, Search } from "lucide-react"
 import { useGetUserOrders } from "@/hooks/useUser"
 import OrderCard from "@/components/ticket/OrderCard"
 import SelectStatus from "@/components/ticket/SelectStatusCard"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 
 export default function TicketsPage() {
   const { data: orders, isLoading, error } = useGetUserOrders()
   const [selectedStatus, setSelectedStatus] = useState({ id: 1, name: "Upcoming", value: "upcoming" })
   const [visibleTickets, setVisibleTickets] = useState(0)
 
+  // Reset visibleTickets when status changes
+  useEffect(() => {
+    setVisibleTickets(0)
+  }, [selectedStatus])
+
   const handleVisibilityChange = useCallback((id, isVisible) => {
-    setVisibleTickets(prev => isVisible ? prev + 1 : prev)
+    setVisibleTickets(prev => isVisible ? prev + 1 : prev - 1)
   }, [])
 
   return (

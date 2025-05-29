@@ -57,7 +57,7 @@ export default function PaymentPage() {
             })
         }, 1000)
 
-        const ws = new WebSocket('ws://localhost:8000/ws?t=' + 'Bearer ' + localStorage.getItem('access_token') + '&r=payment')
+        const ws = new WebSocket(NEXT_PUBLIC_WEBSOCKET_URL + '?t=' + 'Bearer ' + localStorage.getItem('access_token') + '&r=payment')
 
         ws.onopen = () => {
             console.log('WebSocket Connected')

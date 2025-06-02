@@ -19,14 +19,16 @@ const BookingSummary = ({
       <h2 className="text-lg font-bold mb-6">Booking summary</h2>
 
       <div className="flex gap-4 mb-4">
-        <Image
-          src={movieDetails?.body?.poster_url || "/placeholder.svg"}
-          alt={movieDetails?.body?.title || ""}
-          width={100}
-          height={150}
-          className="rounded-lg"
-        />
-        <div>
+        <div className="flex-shrink-0">
+          <Image
+            src={movieDetails?.body?.poster_url || "/placeholder.svg"}
+            alt={movieDetails?.body?.title || ""}
+            width={100}
+            height={150}
+            className="rounded-lg object-cover w-[100px] h-[150px]"
+          />
+        </div>
+        <div className="flex-1">
           <h3 className="font-bold mb-1">{movieDetails?.body?.title}</h3>
           <p className="text-sm text-muted-foreground mb-2">{movieDetails?.body?.genres.join(", ")}</p>
           <div className="text-sm">

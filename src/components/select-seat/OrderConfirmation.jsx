@@ -67,7 +67,7 @@ const OrderConfirmation = ({
 
   return (
     <div className="bg-card rounded-xl p-6">
-      <h2 className="text-lg font-bold mb-6">Xác nhận đơn hàng</h2>
+      <h2 className="text-lg font-bold mb-6">Confirm order</h2>
 
       {/* Movie & Showtime Info */}
       <div className="border-b border-border pb-4 mb-4">
@@ -75,26 +75,26 @@ const OrderConfirmation = ({
         <div className="grid grid-cols-4 gap-2 mb-2">
             <div className="flex items-center gap-2 mb-2">
                 <CalendarIcon className="w-4 h-4" />
-                <p>Ngày: {new Date(showtimeDetails?.body?.start_time).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>
+                <p>Date: {new Date(showtimeDetails?.body?.start_time).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</p>
             </div>
             <div className="flex items-center gap-2 mb-2">
                 <ClockIcon className="w-4 h-4" />
-                <p>Suất chiếu: {new Date(showtimeDetails?.body?.start_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</p>
+                <p>Showtime: {new Date(showtimeDetails?.body?.start_time).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</p>
             </div>
             <div className="flex items-center gap-2 mb-2">
                 <Building2Icon className="w-4 h-4" />
-                <p>Rạp: {cinemaDetails?.body?.name}</p>
+                <p>Cinema: {cinemaDetails?.body?.name}</p>
             </div>
             <div className="flex items-center gap-2 mb-2">
                 <MapPinIcon className="w-4 h-4" />
-                <p>Phòng: {showtimeDetails?.body?.room?.name}</p>
+                <p>Room: {showtimeDetails?.body?.room?.name}</p>
             </div>
         </div>
       </div>
 
       {/* Selected Seats */}
       <div className="border-b border-border pb-4 mb-4">
-        <h3 className="font-bold mb-2">Ghế đã chọn</h3>
+        <h3 className="font-bold mb-2">Selected seat</h3>
         <div className="flex justify-between mb-2">
             <div className="flex flex-wrap gap-2">
             {selectedSeats.map(seat => (
@@ -109,7 +109,7 @@ const OrderConfirmation = ({
       {/* Selected Combos */}
       {selectedCombos.length > 0 && (
         <div className="border-b border-border pb-4 mb-4">
-          <h3 className="font-bold mb-2">Combo đã chọn</h3>
+          <h3 className="font-bold mb-2">Selected combo</h3>
           {selectedCombos.map(combo => (
             <div key={combo.id} className="flex justify-between text-sm mb-2">
               <span>{combo.name} x {combo.quantity}</span>
@@ -143,7 +143,7 @@ const OrderConfirmation = ({
                 : 'bg-primary text-black hover:bg-primary/90'
             }`}
           >
-            {promoCodeApplied ? 'Đã áp dụng' : 'Áp dụng'}
+            {promoCodeApplied ? 'Applied' : 'Apply'}
           </button>
         </div>
         {error && <p className="text-red-500 text-sm mt-1 mb-2">{error}</p>}
@@ -155,17 +155,17 @@ const OrderConfirmation = ({
       {/* Total */}
       <div className="border-b border-border pb-4 mb-6">
         <div className="flex justify-between mb-2">
-          <span>Tổng tiền</span>
+          <span>Total price</span>
           <span>{totalPrice.toLocaleString()} VND</span>
         </div>
         {discountAmount > 0 && (
           <div className="flex justify-between mb-2 text-green-500">
-            <span>Giảm giá</span>
+            <span>Discount</span>
             <span>-{discountAmount.toLocaleString()} VND</span>
           </div>
         )}
         <div className="flex justify-between font-bold text-lg mb-2">
-          <span>Thành tiền</span>
+          <span>Final price</span>
           <span>{(totalPrice - discountAmount).toLocaleString()} VND</span>
         </div>
       </div>
@@ -176,7 +176,7 @@ const OrderConfirmation = ({
           onClick={onBack}
           className="flex-1 py-2 px-4 rounded-md border border-border hover:bg-border"
         >
-          Quay lại
+          Back
         </button>
         <button
           onClick={handleConfirmOrder}
@@ -185,7 +185,7 @@ const OrderConfirmation = ({
             isCreating ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         >
-          {isCreating ? 'Đang xử lý...' : 'Xác nhận đặt vé'}
+          {isCreating ? 'Processing...' : 'Confirm'}
         </button>
       </div>
     </div>

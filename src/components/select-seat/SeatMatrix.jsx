@@ -53,7 +53,7 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
               </div>
             </div>
 
-            {/* Regular seats with horizontal scroll */}
+            {/* Seat matrix */}
             <div 
               ref={regularSeatsRef}
               className="overflow-x-auto mb-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
@@ -106,7 +106,7 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
               </div>
             </div>
 
-            {/* Couple seats row with horizontal scroll */}
+            {/* Couple seats */}
             <div 
               ref={coupleSeatsRef}
               className="overflow-x-auto mb-8 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"

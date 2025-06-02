@@ -148,8 +148,8 @@ function SelectSeatContent() {
     const col = parseInt(seatId.slice(1))
     const isPremiumSeat = row >= 'D' 
       && row < String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 2) 
-      && col >= showtimeDetails?.body?.room?.column_count/2 - 3 
-      && col <= showtimeDetails?.body?.room?.column_count/2 + 4
+      && col >= 4
+      && col <= showtimeDetails?.body?.room?.column_count - 3
     const isCoupleSeat = row === String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 1)
     
     let seatPrice = showtimeDetails?.body?.price
@@ -160,9 +160,9 @@ function SelectSeatContent() {
   }, 0) + selectedCombos.reduce((total, combo) => total + (combo.price * combo.quantity), 0)
 
   const getStepTitle = () => {
-    if (showConfirmation) return 'Xác nhận đơn hàng'
-    if (showComboSelection) return 'Chọn combo'
-    return 'Chọn ghế'
+    if (showConfirmation) return 'Confirm order'
+    if (showComboSelection) return 'Select combo'
+    return 'Select seat'
   }
 
   return (
@@ -198,7 +198,7 @@ function SelectSeatContent() {
                 showtimeDetails={showtimeDetails}
                 selectedSeats={selectedSeats}
                 totalPrice={totalPrice}
-                buttonText="Tiếp tục"
+                buttonText="Continue"
                 onButtonClick={() => setShowComboSelection(true)}
                 buttonDisabled={selectedSeats.length === 0}
               />
@@ -217,7 +217,7 @@ function SelectSeatContent() {
                 selectedSeats={selectedSeats}
                 selectedCombos={selectedCombos}
                 totalPrice={totalPrice}
-                buttonText="Tiếp tục"
+                buttonText="Continue"
                 onButtonClick={() => setShowConfirmation(true)}
                 showBackButton={true}
                 onBackClick={() => setShowComboSelection(false)}

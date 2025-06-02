@@ -123,13 +123,51 @@ export default function PaymentDetailPopup({ isOpen, onClose, orderId }) {
                                 </div>
                             </div>
                         )}
-
+                        
                         <div className="border-t border-border pt-4">
-                            <div className="flex justify-between items-center">
-                                <h4 className="font-bold">Total Amount</h4>
-                                <p className="text-xl text-primary font-bold">
-                                    {order?.body?.total_price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
-                                </p>
+                            <div className="space-y-2">
+                                {(() => {
+                                    // Calculate original ticket price
+                                    const ticketsTotal = order?.body?.tickets.reduce((sum, ticket) => 
+                                        sum + (order?.body?.showtime?.price || 0), 0) || 0
+                                    
+                                    // Calculate combos total
+                                    const combosTotal = order?.body?.combos?.reduce((sum, combo) => 
+                                        sum + (combo.price * combo.quantity), 0) || 0
+                                    
+                                    // Calculate original total
+                                    const originalTotal = ticketsTotal + combosTotal
+                                    
+                                    // Calculate discount
+                                    const discount = originalTotal - (order?.body?.total_price || 0)
+                                    
+                                    return (
+                                        <>
+                                            <div className="flex justify-between items-center">
+                                                <h4 className="font-medium">Subtotal</h4>
+                                                <p className="font-medium">
+                                                    {originalTotal.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                                </p>
+                                            </div>
+                                            
+                                            {discount > 0 && (
+                                                <div className="flex justify-between items-center text-green-500">
+                                                    <h4 className="font-medium">Discount</h4>
+                                                    <p className="font-medium">
+                                                        -{discount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                                    </p>
+                                                </div>
+                                            )}
+                                            
+                                            <div className="flex justify-between items-center border-t border-border pt-2">
+                                                <h4 className="font-bold">Total Amount</h4>
+                                                <p className="text-xl text-primary font-bold">
+                                                    {order?.body?.total_price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
+                                                </p>
+                                            </div>
+                                        </>
+                                    )
+                                })()}
                             </div>
                         </div>
                     </div>

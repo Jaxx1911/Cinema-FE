@@ -48,8 +48,8 @@ const BookingSummary = ({
               const col = parseInt(seatId.slice(1))
               const isPremiumSeat = row >= 'D' 
                 && row < String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 2) 
-                && col >= showtimeDetails?.body?.room?.column_count/2 - 3 
-                && col <= showtimeDetails?.body?.room?.column_count/2 + 4
+                && col >= 4
+                && col <= showtimeDetails?.body?.room?.column_count - 3
               const isCoupleSeat = row === String.fromCharCode(65 + showtimeDetails?.body?.room?.row_count - 1)
               
               let seatPrice = showtimeDetails?.body?.price

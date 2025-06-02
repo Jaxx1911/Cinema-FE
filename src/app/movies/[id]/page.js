@@ -30,7 +30,7 @@ export default function MovieDetailPage() {
   const [selectedCity, setSelectedCity] = useState({ id: 1, name: "Hà Nội", value: "hanoi" })
   const { data: cinemas, isLoading: isCinemasLoading, refetch: refetchCinemas } = useGetCinemas(selectedCity?.value)
 
-  const [selectedCinema, setSelectedCinema] = useState()
+  const [selectedCinema, setSelectedCinema] = useState({})
   
   
   const [roomType, setRoomType] = useState({ id: 1, name: "2D" })
@@ -49,7 +49,7 @@ export default function MovieDetailPage() {
     if (cinemas?.body?.length > 0) {
       setSelectedCinema(cinemas.body?.[0])
     } else {
-      setSelectedCinema(null)
+      setSelectedCinema({})
     }
   }, [cinemas])
 
@@ -116,9 +116,17 @@ export default function MovieDetailPage() {
                   height={450}
                   className="rounded-xl shadow-lg"
                 />
-                <Link href={`/select-seat/${movies.id}`} className="primary-button max-w-md mx-auto block text-center">
-                    Book tickets
-                </Link>
+                <button 
+                  onClick={() => {
+                    document.getElementById('showtimes-section')?.scrollIntoView({ 
+                      behavior: 'smooth',
+                      block: 'start'
+                    })
+                  }}
+                  className="primary-button max-w-md mx-auto block text-center"
+                >
+                  Book tickets
+                </button>
               </div>
 
               {/* Details */}
@@ -178,6 +186,7 @@ export default function MovieDetailPage() {
               </div>
             </div>
           </div>
+          {/* Date */}
           <div className="max-w-8xl mx-auto flex gap-4 mt-8 relative z-10 px-8">
             {dates.map((date) => (
               <button
@@ -194,9 +203,9 @@ export default function MovieDetailPage() {
               </button>
             ))}
           </div>          
-          
+            
           {/* Showtimes */}
-          <div className="max-w-8xl mx-auto px-8 mt-8 relative z-10">
+          <div id="showtimes-section" className="max-w-8xl mx-auto px-8 mt-8 relative z-10">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Showtimes</h2>
               <div className="flex items-center gap-2">

@@ -3,11 +3,14 @@
 import MovieCard from "@/components/dashboard/MovieCard"
 import { useState } from "react"
 import { useNowPlaying, useComingSoon } from "@/hooks/useMovie"
+import { useSearchParams } from "next/navigation"
 
 export default function Movies() {
     const { data: nowPlayingData, isLoading: isLoadingNowPlaying } = useNowPlaying()
     const { data: comingSoonData } = useComingSoon()
-    const [activeTab, setActiveTab] = useState('nowPlaying')
+    const searchParams = useSearchParams()
+    const defaultTab = searchParams.get("tab") || "nowPlaying"
+    const [activeTab, setActiveTab] = useState(defaultTab)
 
     if (isLoadingNowPlaying) {
         return <div>Loading...</div>

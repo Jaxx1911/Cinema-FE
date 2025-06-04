@@ -41,7 +41,6 @@ function SelectSeatContent() {
   }, {})
 
   const initialTickets = showtimeDetails?.body?.tickets?.reduce((acc, ticket) => {
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     console.log(ticket);
     acc[ticket.seat_id] = ticket
     return acc
@@ -180,7 +179,6 @@ function SelectSeatContent() {
         </Link>
         <h1 className="text-2xl font-bold">{getStepTitle()}</h1>
       </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {!showComboSelection && !showConfirmation ? (
           <>

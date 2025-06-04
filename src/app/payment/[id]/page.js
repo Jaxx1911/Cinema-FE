@@ -58,7 +58,7 @@ export default function PaymentPage() {
         }, 1000)
 
         const ws = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_URL + '?t=' + 'Bearer ' + localStorage.getItem('access_token') + '&r=payment')
-
+        
         ws.onopen = () => {
             console.log('WebSocket Connected')
             ws.send(JSON.stringify({ orderId: id }))

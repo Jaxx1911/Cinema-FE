@@ -146,16 +146,7 @@ export default function OrderCard({ id, selectedStatus, onVisibilityChange }) {
                 </div>
               </div>
             </div>
-            <QRPopup 
-              isOpen={isQRPopupOpen}
-              onClose={() => setIsQRPopupOpen(false)}
-              orderId={id}
-            />
-            <TicketDetailPopup 
-              isOpen={isDetailPopupOpen}
-              onClose={() => setIsDetailPopupOpen(false)}
-              orderId={id}
-            />
+            
         </div>
     )
 }

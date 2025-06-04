@@ -59,13 +59,13 @@ export default function SeatMatrix({ showtimeDetails, tickets, toggleSeat, seatM
               className="overflow-x-auto mb-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
               style={{ scrollBehavior: 'smooth' }}
             >
-              <div 
+            <div 
                 className="grid gap-2 mb-4 mx-auto"
                 style={{
                   gridTemplateColumns: `repeat(${showtimeDetails?.body?.room?.column_count || 10}, 36px)`,
                   width: `${(showtimeDetails?.body?.room?.column_count || 10) * 36 + ((showtimeDetails?.body?.room?.column_count || 10) - 1) * 8}px`
                 }}
-              >
+            >
                 {Array.from({ length: showtimeDetails?.body?.room?.row_count - 1 }, (_, i) => String.fromCharCode(65 + i)).map((row) => (
                   <React.Fragment key={row}>
                     {Array.from({ length: showtimeDetails?.body?.room?.column_count }, (_, i) => i + 1).map((col) => {

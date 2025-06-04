@@ -228,7 +228,7 @@ export default function PaymentPage() {
                                     <span className="text-muted-foreground">Date:</span> {showtimeData?.body?.start_time.split("T")[0]}
                                 </p>
                                 <p className="text-sm">
-                                    <span className="text-muted-foreground">Time:</span> {showtimeData?.body?.start_time.split("T")[1].slice(0, 5)}
+                                    <span className="text-muted-foreground">Time:</span> {showtimeData?.body?.start_time ? new Date(new Date(showtimeData.body.start_time).toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' })).toTimeString().slice(0,5) : ''}
                                 </p>
                                 <p className="text-sm">
                                     <span className="text-muted-foreground">Theater:</span> {cinemaData?.body?.name}
